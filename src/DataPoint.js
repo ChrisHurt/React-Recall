@@ -3,24 +3,39 @@ import './DataPoint.scss'
 export default class DataPoint extends React.Component {
 
   state = {
-    diameter: '150px',
-    rotationAngle: '0',
-    radialDisplacement: '0',
-    transformOrigin: 'top left'
+    parentDiameter: this.props.parentDiameter,
+    diameter: this.props.diameter,
+    rotationAngle: this.props.rotationAngle,
+    radialDisplacement: this.props.radialDisplacement,
+    transformOrigin: this.props.transformOrigin
   }
 
   render(){
-    const {diameter, transformOrigin} = this.state
+    
+    const { parentDiameter,
+      diameter,
+      radialDisplacement,
+      rotationAngle,
+      transformOrigin
+    } = this.state
+    
     return (
-      // Use the container and offset the child to rotate
-      // the angular offset
-      <div className="datapoint-rotation-container">
+      <div className="datapoint-rotation-container"
+      style={{
+        width: `${radialDisplacement}px`,
+        height: '1px',
+        display: 'flex',
+        transform: `translate(${parentDiameter / 2}px,${parentDiameter / 2}px) rotate(${rotationAngle}deg)`,
+        transformOrigin,
+        zIndex: '5'
+      }}>
         <div 
           className="datapoint"
           style={{
-            width: diameter,
-            height: diameter,
-            transformOrigin
+            width: `${diameter}px`,
+            height: `${diameter}px`,
+            transform: `translate(${radialDisplacement - (diameter / 2)}px,${-diameter / 2}px)`,
+            zIndex: '1'
             }}>
         </div>
       </div>

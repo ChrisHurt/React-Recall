@@ -1,6 +1,9 @@
 .datapoint{
   position: absolute;
-  background-color: red;
+  background-color: rgba(255,0,0,0.5);
   border-radius: 50%;
-  transform: translate(75px, 75px);
+}
+.datapoint-rotation-container{
+  position: absolute;
+  background-color: rgba(0,255,0,1);
 }
