@@ -2,25 +2,73 @@ import React from 'react'
 import './DatasetContainer.scss'
 import DataPoint from './DataPoint'
 
+// Tier One - max size: 8
+// As data exceeds this boundary
+// 1. assume the same sub-circle diameter data points
+// 2. Trial two 2nd concentric ring approaches 
+  // Fill the nearest larger diameter with an
+    // integer number of sub-circles using max-8
+  // Reduce the number in the inner circle
+    // then do as before
+
 var revolution = 360
 var degToRads = Math.PI/180
 
 export default class DatasetContainer extends React.Component {
 
   state = {
-    diameter: 300,
-    data: {
-      John: 'https://images.unsplash.com/photo-1502791451862-7bd8c1df43a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80',
-      Sue: 'https://images.unsplash.com/photo-1542103749-8ef59b94f47e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80',
-      Sue3: 'https://images.unsplash.com/photo-1542103749-8ef59b94f47e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80',
-      Hipster5: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
-      John2: 'https://images.unsplash.com/photo-1502791451862-7bd8c1df43a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80',
-      Sue2: 'https://images.unsplash.com/photo-1542103749-8ef59b94f47e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80',
-      Hipster58: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
-      Hipster59: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
-      Hipster60: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
-      Hipster61: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60'
-    }
+    diameter: this.props.diameter,
+    data: this.props.data
+  }
+
+  calculateSubCircleRadialDisplacement = (outerDiameter, data) => {
+    return ((outerDiameter)/(Math.sin(degToRads*this.calculateSubCircleFullAngle(data)/2)+1))
+  }
+
+  calculateSubCircleFullAngle = (data) => {
+    return (revolution / Object.entries(data).length)
+  }
+  calculateSubCircleRotationAngle = (rotationCoefficient,data) => {
+    return Number(rotationCoefficient * this.calculateSubCircleFullAngle(data))
+      // * degreesPerCircle * index)
+  }
+
+  calculateSubCircleDiameter = (outerDiameter, data) => {
+    return outerDiameter * 2*(1 - ((1)/(1 + Math.sin(degToRads*(this.calculateSubCircleFullAngle(data))/2))))
+  }
+
+  renderContainerCircle = (diameter,backgroundColor, transformOffset) => {
+    return(
+      <div 
+        className="DS-container"
+        style={{
+          width: diameter,
+          height: diameter,
+          backgroundColor,
+          transform: `translate(${(transformOffset)}px,${transformOffset}px)`
+        }}
+      >
+      </div>
+    )
+  }
+
+  renderCircleRing = (diameter,data,transformOffset) =>{
+    return (
+      <div>
+        {Object.entries(data).map((person,index)=>{
+            return <DataPoint
+              key={`dp-${index}`}
+              parentDiameter={diameter}
+              diameter={this.calculateSubCircleDiameter(diameter,data)}
+              rotationAngle={this.calculateSubCircleRotationAngle(index,data)}
+              radialDisplacement={this.calculateSubCircleRadialDisplacement(diameter,data)}
+              text={person[0]}
+              image_url={person[1]}
+              transformOffset={transformOffset}
+            />          
+          })}
+      </div>
+    ) 
   }
 
   render(){
@@ -29,30 +77,16 @@ export default class DatasetContainer extends React.Component {
       data
     } = this.state
     return (
-      <div className="DS-offset">
-        <div className="DS-container"
-        style={{
-          width: 2*diameter,
-          height: 2*diameter,
-          transform: `translate(${-diameter/2}px,${-diameter/2}px)`
-          
-          }}>
+      <div 
+        className="DS-offset"
+        style={{}}
+      >
+        <div className="flex-wrapper">
+          {this.renderContainerCircle(3*diameter, 'yellowgreen',0)}
+          {this.renderContainerCircle(2*diameter, 'blue',diameter/2)}
+          {this.renderCircleRing(diameter,data,diameter/2)}
+          {this.renderCircleRing(1.5* diameter,data,0)}
         </div>
-        {Object.entries(data).map((person,index)=>{
-          let degreesPerCircle = (revolution / Object.entries(data).length)
-          let calculatedAngle = Number(degreesPerCircle * index)
-          let calculatedDiameter = diameter * 2*(1 - ((1)/(1 + Math.sin(degToRads*degreesPerCircle/2))))
-          return <DataPoint
-            key={`dp-${index}`}
-            parentDiameter={diameter}
-            diameter={calculatedDiameter}
-            rotationAngle={calculatedAngle}
-            radialDisplacement={(diameter)/(Math.sin(degToRads*degreesPerCircle/2)+1)}
-            transformOrigin={'left center'}
-            text={person[0]}
-            image_url={person[1]}
-          />          
-        })}
       </div>
     )
   }

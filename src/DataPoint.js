@@ -7,26 +7,26 @@ export default class DataPoint extends React.Component {
     diameter: this.props.diameter,
     rotationAngle: this.props.rotationAngle,
     radialDisplacement: this.props.radialDisplacement,
-    transformOrigin: this.props.transformOrigin
+    transformOrigin: this.props.transformOrigin,
+    transformOffset: (this.props.transformOffset || 0)
   }
 
   render(){
     
-    const { parentDiameter,
+    const {
+      parentDiameter,
       diameter,
       radialDisplacement,
       rotationAngle,
-      transformOrigin
+      transformOffset
     } = this.state
     
     return (
       <div className="datapoint-rotation-container"
       style={{
         width: `${radialDisplacement}px`,
-        height: '1px',
-        display: 'flex',
-        transform: `translate(${parentDiameter / 2}px,${parentDiameter / 2}px) rotate(${rotationAngle}deg)`,
-        transformOrigin,
+        transform: `translate(${parentDiameter + transformOffset}px,${parentDiameter + transformOffset}px) rotate(${rotationAngle}deg)`,
+        transformOrigin: 'left center',
         zIndex: '5'
       }}>
         <div 
