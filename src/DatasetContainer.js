@@ -18,16 +18,20 @@ export default class DatasetContainer extends React.Component {
 
   renderContainerCircle = (diameter,backgroundColor,transformOffset,zIndex) => {
     return(
-      <div 
-        className="DS-container"
-        style={{
-          width: 2*diameter,
-          height: 2*diameter,
-          backgroundColor,
-          transform: `translate(${(transformOffset)}px,${transformOffset}px)`,
-          zIndex: (zIndex || '0')
-        }}
-      >
+      <div style = {{
+        height: 0
+      }}>
+        <div 
+          className="DS-container"
+          style={{
+            width: 2*diameter,
+            height: 2*diameter,
+            backgroundColor,
+            transform: `translate(${(transformOffset)}px,${transformOffset}px)`,
+            zIndex: (zIndex || '0')
+          }}
+        >
+        </div>
       </div>
     )
   }
