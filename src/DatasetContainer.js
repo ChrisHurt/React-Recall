@@ -1,55 +1,21 @@
 import React from 'react'
 import './DatasetContainer.scss'
 import DataPoint from './DataPoint'
-
-var revolution = 360
-var degToRads = Math.PI/180
-var radsToDegs = 180/Math.PI
+import CircleCalculations from './circleCalculations'
 
 export default class DatasetContainer extends React.Component {
 
   state = {
     diameter: this.props.diameter,
-    subCircleDiameter: this.props.diameter *2* (1 - ((1)/(1 + Math.sin(degToRads*((revolution / Object.entries(this.props.data).length))/2)))),
+
+    subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,this.props.data),
     data: this.props.data,
-    circleDiameters: [],
-    largestDiameter: 0
-  }
-
-  seedData = (numDataPoints) => {
-    let seed = {}
-    for(let i = 0; i < numDataPoints; i++){
-      seed[i] = i;
-    }
-    return seed
-  }
-
-  calculateDataNeededForSecondRing = (innerDiameter) =>{
-    return Math.ceil(180 / (radsToDegs * Math.asin((1)/(1+ (innerDiameter)/(this.state.subCircleDiameter/2) ))))
-  }
-
-  calculateSubCircleRadialDisplacement = (outerDiameter, data) => {
-    return ((outerDiameter)/(Math.sin(degToRads*this.calculateSubCircleFullAngle(data)/2)+1))
-  }
-
-  calculateSubCircleFullAngle = (data) => {
-    return (revolution / Object.entries(data).length)
-  }
-
-  calculateNewOuterDiameter = (fixedSubCircleRadius,numDataPoints) => {
-    return fixedSubCircleRadius * (1 + (1)/(Math.sin(degToRads * ((revolution/2)/numDataPoints))))
-  }
-
-  calculateSubCircleRotationAngle = (rotationCoefficient,data) => {
-    return Number(rotationCoefficient * this.calculateSubCircleFullAngle(data))
-  }
-
-  calculateSubCircleDiameter = (outerDiameter, data) => {
-    return outerDiameter * 2*(1 - ((1)/(1 + Math.sin(degToRads*(this.calculateSubCircleFullAngle(data))/2))))
-  }
-
-  calculateNewRadialDisplacement = (fixedSubCircleRadius,numDataPoints) => {
-    return this.calculateNewOuterDiameter(fixedSubCircleRadius,numDataPoints) - fixedSubCircleRadius
+    circleTiers: [],
+    // circleData: [0,0,0],                        // Fill in data distribution
+    // circleDiameters: [this.props.diameter,0,0], // Fill in diameters
+    largestDiameter: 0                          // Use External Library 
+                                                // To make functions
+                                                // Available Here
   }
 
   renderContainerCircle = (diameter,backgroundColor,transformOffset,zIndex) => {
@@ -75,9 +41,10 @@ export default class DatasetContainer extends React.Component {
             return <DataPoint
               key={`dp-${index}`}
               parentDiameter={diameter}
-              diameter={(fixedDiameter || this.calculateSubCircleDiameter(diameter,data))}
-              rotationAngle={this.calculateSubCircleRotationAngle(index,data)}
-              radialDisplacement={(this.calculateNewRadialDisplacement(fixedDiameter/2,Object.entries(data).length) || this.calculateSubCircleRadialDisplacement(diameter,data))}
+              // diameter={(fixedDiameter || this.calculateSubCircleDiameter(diameter,data))}
+              diameter={(fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}
+              rotationAngle={CircleCalculations.calculateSubCircleRotationAngle(index,data)}
+              radialDisplacement={(CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,Object.entries(data).length) || CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
               text={person[0]}
               image_url={person[1]}
               transformOffset={transformOffset}
@@ -98,6 +65,7 @@ export default class DatasetContainer extends React.Component {
 
     // For fully automated rendering
       // 1. Calculate all tier diameters & data distribution
+        // Consider calculating as a ratio
       // 2. Store the largest diameter in the state
         // a. Use this for transform offset calculations
       // 3. Iterate through each data tier
@@ -124,20 +92,20 @@ export default class DatasetContainer extends React.Component {
               diameter,
               data,
               (
-                this.calculateNewOuterDiameter(
+                CircleCalculations.calculateNewOuterDiameter(
                   subCircleDiameter / 2,
-                  this.calculateDataNeededForSecondRing(diameter)
+                  CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
                 ) - diameter
               )
             )
           }
           {
             this.renderCircleRing(
-              this.calculateNewOuterDiameter(
+              CircleCalculations.calculateNewOuterDiameter(
                 subCircleDiameter / 2,
-                this.calculateDataNeededForSecondRing(diameter)
+                CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
               ),
-              this.seedData(this.calculateDataNeededForSecondRing(diameter)),
+              CircleCalculations.seedData(CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)),
               0,
               subCircleDiameter
             )
@@ -145,20 +113,20 @@ export default class DatasetContainer extends React.Component {
           {/* 3rd tier example - using nested calls of last diameter */}
           {
             this.renderCircleRing(
-              this.calculateNewOuterDiameter(
+              CircleCalculations.calculateNewOuterDiameter(
                 subCircleDiameter / 2,
-                this.calculateDataNeededForSecondRing(this.calculateNewOuterDiameter(
+                CircleCalculations.calculateDataNeededForSecondRing(CircleCalculations.calculateNewOuterDiameter(
                   subCircleDiameter / 2,
-                  this.calculateDataNeededForSecondRing(diameter)
-                ))
+                  CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
+                ),subCircleDiameter)
               ),
-              this.seedData(this.calculateDataNeededForSecondRing(this.calculateNewOuterDiameter(
+              CircleCalculations.seedData(CircleCalculations.calculateDataNeededForSecondRing(CircleCalculations.calculateNewOuterDiameter(
                 subCircleDiameter / 2,
-                this.calculateDataNeededForSecondRing(diameter)
-              ))),
-              -this.calculateNewOuterDiameter(
+                CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
+              ),subCircleDiameter)),
+              -CircleCalculations.calculateNewOuterDiameter(
                 subCircleDiameter / 2,
-                this.calculateDataNeededForSecondRing(diameter)
+                CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
               )+diameter,
               subCircleDiameter
             )
@@ -169,18 +137,18 @@ export default class DatasetContainer extends React.Component {
               diameter,
               'blue',
               (
-                this.calculateNewOuterDiameter(
+                CircleCalculations.calculateNewOuterDiameter(
                   subCircleDiameter / 2,
-                  this.calculateDataNeededForSecondRing(diameter)
+                  CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
                 )-diameter
               )
             )
           }
           {
             this.renderContainerCircle(
-              this.calculateNewOuterDiameter(
+              CircleCalculations.calculateNewOuterDiameter(
                 subCircleDiameter / 2,
-                this.calculateDataNeededForSecondRing(diameter)
+                CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
               )
               ,
               'yellowgreen',

@@ -27,6 +27,8 @@ export default class DataPoint extends React.Component {
         width: `${radialDisplacement}px`,
         transform: `translate(${parentDiameter + transformOffset}px,${parentDiameter + transformOffset}px) rotate(${rotationAngle}deg)`,
         transformOrigin: 'left center',
+        // height: '1px',
+        // backgroundColor: 'green',
         zIndex: '5'
       }}>
         <div 
