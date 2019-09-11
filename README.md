@@ -11,17 +11,8 @@ The UI concept for representing the data is multiples circles packed within a la
   - See: http://mathworld.wolfram.com/CirclePacking.html
   - Automate distribution of data within concentric rings of circles
   - Data will be represented by the smaller circles with photo thumbnails and initially hidden text
+
 ### Sprint 2 -- Currently In Progress
-UI Behaviours include the following 
-  - After clicking a sub-circle it should:
-    - Expand
-    - Move to the center
-    - reveal data's text (a name or whatever information you prefer)
-    - allow users to indicate if they remembered the hidden text
-      - This could be done automatically by typing their name in an input prior to clicking or,
-      - This could be done by using a check box in the circle
-  - After resolving the user response the sub-circle should be removed from the dataset
-### Sprint 3
 Look into methods for collecting data to integrate into the UI for testing
   - Consider:
     - Facebook API
@@ -31,6 +22,17 @@ Look into methods for collecting data to integrate into the UI for testing
   - Custom memorisation fields, instead of thumbnails & names for people
       - Photo & Job title for people or,
       - Plant photos and names (maybe you figure out which obscure little brown mushrooms are which!) [https://www.mushroom-appreciation.com/little-brown-mushrooms.html]
+      
+### Sprint 3
+UI Behaviours include the following 
+  - After clicking a sub-circle it should:
+    - Expand
+    - Move to the center
+    - reveal data's text (a name or whatever information you prefer)
+    - allow users to indicate if they remembered the hidden text
+      - This could be done automatically by typing their name in an input prior to clicking or,
+      - This could be done by using a check box in the circle
+  - After resolving the user response the sub-circle should be removed from the dataset
 
 ## Installation Instructions
 - This is currently under construction and a instructions will be placed here when ready.

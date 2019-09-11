@@ -4,6 +4,7 @@ import DataPoint from './DataPoint'
 import CircleCalculations from './circleCalculations'
 
 var tierSizes = [8,15,22]
+// var MUSHROOM_OBSERVER_APIKEY = ENV['MUSHROOM_OBSERVER_APIKEY']
 
 export default class DatasetContainer extends React.Component {
 
