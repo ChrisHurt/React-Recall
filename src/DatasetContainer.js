@@ -3,19 +3,17 @@ import './DatasetContainer.scss'
 import DataPoint from './DataPoint'
 import CircleCalculations from './circleCalculations'
 
+var tierSizes = [8,15,22]
+
 export default class DatasetContainer extends React.Component {
 
   state = {
     diameter: this.props.diameter,
-
-    subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,this.props.data),
+    // subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,this.props.data),
+    subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,(CircleCalculations.circleTiers(this.props.data,this.props.diameter)[0]['data'])),
     data: this.props.data,
-    circleTiers: [],
-    // circleData: [0,0,0],                        // Fill in data distribution
-    // circleDiameters: [this.props.diameter,0,0], // Fill in diameters
-    largestDiameter: 0                          // Use External Library 
-                                                // To make functions
-                                                // Available Here
+    circleTiers: CircleCalculations.circleTiers(this.props.data,this.props.diameter),
+    largestDiameter: CircleCalculations.largestDiameter(this.props.data,this.props.diameter)
   }
 
   renderContainerCircle = (diameter,backgroundColor,transformOffset,zIndex) => {
@@ -34,17 +32,16 @@ export default class DatasetContainer extends React.Component {
     )
   }
 
-  renderCircleRing = (diameter,data,transformOffset,fixedDiameter) =>{
+  renderCircleRing = (diameter,data,transformOffset,fixedDiameter,tierIndex) =>{
     return (
       <div>
         {Object.entries(data).map((person,index)=>{
             return <DataPoint
               key={`dp-${index}`}
               parentDiameter={diameter}
-              // diameter={(fixedDiameter || this.calculateSubCircleDiameter(diameter,data))}
               diameter={(fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}
               rotationAngle={CircleCalculations.calculateSubCircleRotationAngle(index,data)}
-              radialDisplacement={(CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,Object.entries(data).length) || CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
+              radialDisplacement={(CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) || CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
               text={person[0]}
               image_url={person[1]}
               transformOffset={transformOffset}
@@ -78,84 +75,42 @@ export default class DatasetContainer extends React.Component {
 
   render(){
     const {
-      diameter,
-      data,
-      subCircleDiameter
+      subCircleDiameter,
+      circleTiers,
+      largestDiameter
     } = this.state
     return (
       <div 
         className="DS-offset"
         style={{}}
       >
-          {
-            this.renderCircleRing(
-              diameter,
-              data,
-              (
-                CircleCalculations.calculateNewOuterDiameter(
-                  subCircleDiameter / 2,
-                  CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
-                ) - diameter
+        
+        {circleTiers.map((circleTier,index)=>{
+          return (<div key={`CircleTier: ${index}`}>
+            {/* Render Circle Ring */}
+            {
+              this.renderCircleRing(
+                circleTier.outerDiameter,
+                circleTier.data,
+                largestDiameter - circleTier.outerDiameter,
+                // subCircleDiameter
+                (Object.keys(circleTier.data).length != tierSizes[index] && index!==0) ? (subCircleDiameter) : (null),
+                (Object.keys(circleTier.data).length != tierSizes[index] && index!==0) ? (index) : (null)
               )
-            )
-          }
-          {
-            this.renderCircleRing(
-              CircleCalculations.calculateNewOuterDiameter(
-                subCircleDiameter / 2,
-                CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
-              ),
-              CircleCalculations.seedData(CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)),
-              0,
-              subCircleDiameter
-            )
-          }
-          {/* 3rd tier example - using nested calls of last diameter */}
-          {
-            this.renderCircleRing(
-              CircleCalculations.calculateNewOuterDiameter(
-                subCircleDiameter / 2,
-                CircleCalculations.calculateDataNeededForSecondRing(CircleCalculations.calculateNewOuterDiameter(
-                  subCircleDiameter / 2,
-                  CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
-                ),subCircleDiameter)
-              ),
-              CircleCalculations.seedData(CircleCalculations.calculateDataNeededForSecondRing(CircleCalculations.calculateNewOuterDiameter(
-                subCircleDiameter / 2,
-                CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
-              ),subCircleDiameter)),
-              -CircleCalculations.calculateNewOuterDiameter(
-                subCircleDiameter / 2,
-                CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
-              )+diameter,
-              subCircleDiameter
-            )
-          }
-          {/* 3rd tier example - using nested calls of last diameter */}
-          {
-            this.renderContainerCircle(
-              diameter,
-              'blue',
-              (
-                CircleCalculations.calculateNewOuterDiameter(
-                  subCircleDiameter / 2,
-                  CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
-                )-diameter
+            }
+            {/* Render Circle Backgrounds */}
+            {
+              this.renderContainerCircle(
+                circleTier.outerDiameter,
+                'blue',
+                (
+                  largestDiameter - circleTier.outerDiameter
+                )
               )
-            )
-          }
-          {
-            this.renderContainerCircle(
-              CircleCalculations.calculateNewOuterDiameter(
-                subCircleDiameter / 2,
-                CircleCalculations.calculateDataNeededForSecondRing(diameter,subCircleDiameter)
-              )
-              ,
-              'yellowgreen',
-              0,
-              -1
-            )
-          }
+            }
+          </div>
+          )
+        })}
       </div>
     )
   }
