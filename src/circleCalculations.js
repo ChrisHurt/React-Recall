@@ -4,7 +4,6 @@ var radsToDegs = 180/Math.PI
 
 var tierSizes = [8,15,22]
 
-
 let seedData = (numDataPoints) => {
   let seed = {}
   for(let i = 0; i < numDataPoints; i++){
@@ -37,15 +36,9 @@ let calculateSubCircleDiameter = (outerDiameter, data) => {
   return outerDiameter * 2*(1 - ((1)/(1 + Math.sin(degToRads*(calculateSubCircleFullAngle(data))/2))))
 }
 
-
-
 let calculateNewRadialDisplacement = (fixedSubCircleRadius,numDataPoints) => {
   return calculateNewOuterDiameter(fixedSubCircleRadius,numDataPoints) - fixedSubCircleRadius
 }
-
-// let calculateNewRadialDisplacement = (fixedSubCircleRadius,knownOuterDiameter) => {
-//   return knownOuterDiameter - fixedSubCircleRadius
-// }
 
 let distributeData = (data) => {
   return Object.entries(data).reduce((array,datapoint,index)=>{

@@ -15,14 +15,12 @@ The UI concept for representing the data is multiples circles packed within a la
 ### Sprint 2 -- Currently In Progress
 Look into methods for collecting data to integrate into the UI for testing
   - Consider:
-    - Facebook API
-    - LinkedIn API
-    - Any other API's or accessible data that can be applied in this context
+    - Facebook & Instagram API's - Rejected, not enough time to implement
+    - LinkedIn API - Pending Decision
+    - Any other API's or accessible data that can be applied in this context - No suitable options found, Pending Decision
   - Look into methods for allowing user input and storage of this data as appropriate and if needed
-  - Custom memorisation fields, instead of thumbnails & names for people
-      - Photo & Job title for people or,
-      - Plant photos and names (maybe you figure out which obscure little brown mushrooms are which!) [https://www.mushroom-appreciation.com/little-brown-mushrooms.html]
-      
+    - Postgresql with node or ruby backend - Under consideration
+
 ### Sprint 3
 UI Behaviours include the following 
   - After clicking a sub-circle it should:
