@@ -49,21 +49,23 @@ let calculateNewRadialDisplacement = (fixedSubCircleRadius,numDataPoints) => {
 
 let distributeData = (data) => {
   return Object.entries(data).reduce((array,datapoint,index)=>{
-    if(index <= 7){
+    if(index < tierSizes[0]){
       if(!array[0]){
         array[0] = {}
       }
       array[0][datapoint[0]] = datapoint[1]
-    } else if(index <= 22){
+    } else if(index < tierSizes[0] + tierSizes[1]){
       if(!array[1]){
         array[1] = {}
       }
       array[1][datapoint[0]] = datapoint[1]
-    } else {
+    } else if (index < tierSizes[0] + tierSizes[1] + tierSizes[2]){
       if(!array[2]){
         array[2] = {}
       }
       array[2][datapoint[0]] = datapoint[1]
+    } else {
+      console.error("No more than 45 datapoints are supported for this component")
     }
     return array
   },[])

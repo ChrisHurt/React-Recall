@@ -9,7 +9,6 @@ export default class DatasetContainer extends React.Component {
 
   state = {
     diameter: this.props.diameter,
-    // subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,this.props.data),
     subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,(CircleCalculations.circleTiers(this.props.data,this.props.diameter)[0]['data'])),
     data: this.props.data,
     circleTiers: CircleCalculations.circleTiers(this.props.data,this.props.diameter),
@@ -51,28 +50,6 @@ export default class DatasetContainer extends React.Component {
     ) 
   }
 
-  // TODO: Component Design Workflow
-    // Break down data object into at most 3 tiers of sub-data objects
-      // Use array of data objects to achieve rendering
-      // One object per tier
-    // Could use recursive logic to calculate
-      // successive layers of diameters
-    // Consider separating functions into a calculations js file
-      // for jest test automation and for a better separation of concerns
-
-    // For fully automated rendering
-      // 1. Calculate all tier diameters & data distribution
-        // Consider calculating as a ratio
-      // 2. Store the largest diameter in the state
-        // a. Use this for transform offset calculations
-      // 3. Iterate through each data tier
-        // a. Render each background circle
-        // b  Render each ring of sub-circles
-          // Use the sub-data for datapoint position & size
-          // Use the global largestDiameter to correctly calculate offsets
-            // i.e. transformOffset = largestDiameter - thisDiameter
-
-
   render(){
     const {
       subCircleDiameter,
@@ -94,8 +71,8 @@ export default class DatasetContainer extends React.Component {
                 circleTier.data,
                 largestDiameter - circleTier.outerDiameter,
                 // subCircleDiameter
-                (Object.keys(circleTier.data).length != tierSizes[index] && index!==0) ? (subCircleDiameter) : (null),
-                (Object.keys(circleTier.data).length != tierSizes[index] && index!==0) ? (index) : (null)
+                (Object.keys(circleTier.data).length !== tierSizes[index] && index!==0) ? (subCircleDiameter) : (null),
+                (Object.keys(circleTier.data).length !== tierSizes[index] && index!==0) ? (index) : (null)
               )
             }
             {/* Render Circle Backgrounds */}
