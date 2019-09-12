@@ -104,7 +104,7 @@ export default class DatasetContainer extends React.Component {
         {Object.entries(data).map((person,index)=>{
             return <DataPoint
               key={`dp-${index}`}
-              zIndex={tierIndex+2}
+              zIndex={(tierIndex!==1) ? (tierIndex) : 5}
 
               parentDiameter={diameter}
               diameter={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}

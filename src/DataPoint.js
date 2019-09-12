@@ -51,7 +51,7 @@ export default class DataPoint extends React.Component {
             transform: `translate(${parentDiameter + transformOffset}px,${parentDiameter + transformOffset}px) rotate(${rotationAngle}deg)`,
             transformOrigin: 'left center',
             height: 0,
-            zIndex: (radialDisplacement===0) ? (2)  : zIndex,
+            zIndex: (radialDisplacement===0) ? (4)  : zIndex+1,
             top,
             left
           }
@@ -78,14 +78,13 @@ export default class DataPoint extends React.Component {
             (transitionAllowed) ? (function(){
               centerTransition(index,tierIndex)
               preventTransitions()
-            }) : () => allowTransitions()
+            }) : ()=>{}
           }
         >
           {(radialDisplacement === 0)? (<div
               style={{
                 width: `${diameter}px`,
                 height: `${diameter}px`
-                // zIndex: -1
               }}
             >
             <div style={{
@@ -97,7 +96,12 @@ export default class DataPoint extends React.Component {
                 userSelect: 'none',
                 zIndex: zIndex+1
               }}
-              onClick={()=>removeDataByKey(text)}
+              onClick={
+                ()=>{
+                  removeDataByKey(text)
+                  allowTransitions()
+                }
+              }
             >
               I remember
             </button>
@@ -107,7 +111,12 @@ export default class DataPoint extends React.Component {
                 userSelect: 'none',
                 zIndex: zIndex+1
               }}
-              onClick={()=>removeDataByKey(text)}
+              onClick={
+                ()=>{
+                  removeDataByKey(text)
+                  allowTransitions()
+                }
+              }
             >
               I forgot
             </button>
