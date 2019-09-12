@@ -4,7 +4,6 @@ import DataPoint from './DataPoint'
 import CircleCalculations from './circleCalculations'
 
 var tierSizes = [8,15,22]
-// var MUSHROOM_OBSERVER_APIKEY = ENV['MUSHROOM_OBSERVER_APIKEY']
 
 export default class DatasetContainer extends React.Component {
 
@@ -13,27 +12,90 @@ export default class DatasetContainer extends React.Component {
     subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,(CircleCalculations.circleTiers(this.props.data,this.props.diameter)[0]['data'])),
     data: this.props.data,
     circleTiers: CircleCalculations.circleTiers(this.props.data,this.props.diameter),
-    largestDiameter: CircleCalculations.largestDiameter(this.props.data,this.props.diameter)
+    largestDiameter: CircleCalculations.largestDiameter(this.props.data,this.props.diameter),
+    parentWidth: this.props.parentWidth,
+    parentHeight: this.props.parentHeight,
+    parentWidthUnit: this.props.parentWidthUnit,
+    parentHeightUnit: this.props.parentHeightUnit,
+    transitionsAllowed: true
   }
 
   renderContainerCircle = (diameter,backgroundColor,transformOffset,zIndex) => {
     return(
       <div style = {{
-        height: 0
+        height: 0,
+        width: 0
       }}>
         <div 
           className="DS-container"
           style={{
+            position: "relative",
             width: 2*diameter,
             height: 2*diameter,
             backgroundColor,
-            transform: `translate(${(transformOffset)}px,${transformOffset}px)`,
-            zIndex: (zIndex || '0')
+            zIndex: (zIndex || '0'),
+            top: `calc(${this.state.parentHeight/2}${this.state.parentHeightUnit} - ${this.state.largestDiameter - transformOffset}px)`,
+            left: `calc(${this.state.parentWidth/2}${this.state.parentWidthUnit} - ${this.state.largestDiameter - transformOffset}px)`
           }}
         >
         </div>
       </div>
     )
+  }
+
+  removeDataByKey = (key) => {
+    console.log(`key: ${key}`)
+    let newDataArray = Object.entries(this.state.data)
+
+    let newDataObject = newDataArray.reduce((newDataObj,keyValPair,index)=>{
+      if(keyValPair[0]!==key){
+        newDataObj[keyValPair[0]] = keyValPair[1]
+      } else {
+        console.log(`keyValPair[0]: ${keyValPair[0]}`)
+        console.log(`keyValPair[1]: ${keyValPair[1]}`)
+        console.log('Value ignored??')
+      }
+      return newDataObj
+    },{})
+
+    this.setState({
+      data: newDataObject,
+      circleTiers: CircleCalculations.circleTiers(newDataObject,this.state.diameter),
+      selectedCircleIndex: undefined,
+      selectedCircleTierIndex: undefined,
+      largestDiameter: CircleCalculations.largestDiameter(newDataObject,this.state.diameter),
+    })
+  }
+
+  centerTransition = (index,tierIndex) => {
+    // console.log('center transitioning')
+    // console.log(`previous selected circle index \t\t\t${this.state.selectedCircleIndex}`)
+    // console.log(`previous selected circle tier index \t${this.state.selectedCircleTierIndex}`)
+
+    // console.log(`current selected circle index \t\t\t${index}`)
+    // console.log(`current selected circle tier index \t ${tierIndex}`)
+
+    this.setState({
+      selectedCircleIndex: index,
+      selectedCircleTierIndex: tierIndex
+    })
+  }
+
+  allowTransitions = () => {
+    // console.log('center not transitioning')
+    // console.log(`allowing transitions global: ${this.state.transitionsAllowed}`)
+    // console.log('')
+    this.setState({
+      transitionsAllowed: true
+    })
+  }
+
+  preventTransitions = () => {
+    // console.log(`preventing transitions global: ${this.state.transitionsAllowed}`)
+    // console.log('')
+    this.setState({
+      transitionsAllowed: false
+    })
   }
 
   renderCircleRing = (diameter,data,transformOffset,fixedDiameter,tierIndex) =>{
@@ -42,13 +104,31 @@ export default class DatasetContainer extends React.Component {
         {Object.entries(data).map((person,index)=>{
             return <DataPoint
               key={`dp-${index}`}
+              zIndex={tierIndex+2}
+
               parentDiameter={diameter}
-              diameter={(fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}
+              diameter={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}
               rotationAngle={CircleCalculations.calculateSubCircleRotationAngle(index,data)}
-              radialDisplacement={(CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) || CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
+              radialDisplacement={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? 0 : (CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) || CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
               text={person[0]}
               image_url={person[1]}
               transformOffset={transformOffset}
+              top={`calc(${this.state.parentHeight/2}${this.state.parentHeightUnit} - ${this.state.largestDiameter}px)`}
+              left={`calc(${this.state.parentWidth/2}${this.state.parentWidthUnit} - ${this.state.largestDiameter}px)`}
+              
+              transitionAllowed={this.state.transitionsAllowed}
+
+              index={index}
+              tierIndex={tierIndex}
+              centred={(this.selectedCircleIndex === index && this.selectedCircleTierIndex === tierIndex)}
+
+              centerTransition={this.centerTransition}
+              preventTransitions={this.preventTransitions}
+              allowTransitions={this.allowTransitions}
+              removeDataByKey={this.removeDataByKey}
+
+              backgroundSize={`${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px ${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px,cover`}
+              // backgroundSize="contain"
             />          
           })}
       </div>
@@ -68,16 +148,22 @@ export default class DatasetContainer extends React.Component {
       >
         
         {circleTiers.map((circleTier,index)=>{
-          return (<div key={`CircleTier: ${index}`}>
+          return (
+            <div 
+              key={`CircleTier: ${index}`}
+              style={{
+                width: 0,
+                height: 0
+              }}
+            >
             {/* Render Circle Ring */}
             {
               this.renderCircleRing(
                 circleTier.outerDiameter,
                 circleTier.data,
                 largestDiameter - circleTier.outerDiameter,
-                // subCircleDiameter
                 (Object.keys(circleTier.data).length !== tierSizes[index] && index!==0) ? (subCircleDiameter) : (null),
-                (Object.keys(circleTier.data).length !== tierSizes[index] && index!==0) ? (index) : (null)
+                index
               )
             }
             {/* Render Circle Backgrounds */}

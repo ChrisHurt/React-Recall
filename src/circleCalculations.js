@@ -81,7 +81,6 @@ let circleTiers = (data,diameter) => {
       let numDataPoints = tierSizes[index]
       outerDiameter = calculateNewOuterDiameter(subCircleDiameter/2,numDataPoints)
     }
-    // dataArray[index] = circleTier
     return { data: circleTier, outerDiameter }
   })
   // console.log(dA)
