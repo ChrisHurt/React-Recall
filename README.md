@@ -23,7 +23,7 @@ UI Behaviours include the following
       - This could be done by using a check box in the circle
   - After resolving the user response the sub-circle should be removed from the dataset
 
-  ### Sprint 3 -- In Progress
+  ### Sprint 3 -- Completed 13/09/19
   Store memory outcomes in a new component
     - Hardcode more data for testing - 50 unique data points
     - Success in one, Failure in another
