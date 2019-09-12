@@ -1,6 +1,7 @@
 import React from 'react'
 import './DatasetContainer.scss'
 import DataPoint from './DataPoint'
+import CircleMemoryOutcomes from './CircleMemoryOutcomes'
 import CircleCalculations from './circleCalculations'
 
 var tierSizes = [8,15,22]
@@ -17,7 +18,9 @@ export default class DatasetContainer extends React.Component {
     parentHeight: this.props.parentHeight,
     parentWidthUnit: this.props.parentWidthUnit,
     parentHeightUnit: this.props.parentHeightUnit,
-    transitionsAllowed: true
+    transitionsAllowed: true,
+    successes: 0,
+    failures: 0
   }
 
   renderContainerCircle = (diameter,backgroundColor,transformOffset,zIndex) => {
@@ -64,6 +67,17 @@ export default class DatasetContainer extends React.Component {
       selectedCircleIndex: undefined,
       selectedCircleTierIndex: undefined,
       largestDiameter: CircleCalculations.largestDiameter(newDataObject,this.state.diameter),
+    })
+  }
+
+  incrementSuccess = () => {
+    this.setState({
+      successes: this.state.successes + 1
+    })
+  }
+  incrementFailure = () => {
+    this.setState({
+      failures: this.state.failures + 1
     })
   }
 
@@ -126,6 +140,8 @@ export default class DatasetContainer extends React.Component {
               preventTransitions={this.preventTransitions}
               allowTransitions={this.allowTransitions}
               removeDataByKey={this.removeDataByKey}
+              incrementSuccess={this.incrementSuccess}
+              incrementFailure={this.incrementFailure}
 
               backgroundSize={`${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px ${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px,cover`}
               // backgroundSize="contain"
@@ -139,7 +155,9 @@ export default class DatasetContainer extends React.Component {
     const {
       subCircleDiameter,
       circleTiers,
-      largestDiameter
+      largestDiameter,
+      successes,
+      failures
     } = this.state
     return (
       <div 
@@ -170,7 +188,7 @@ export default class DatasetContainer extends React.Component {
             {
               this.renderContainerCircle(
                 circleTier.outerDiameter,
-                'blue',
+                '#116466',
                 (
                   largestDiameter - circleTier.outerDiameter
                 )
@@ -179,6 +197,7 @@ export default class DatasetContainer extends React.Component {
           </div>
           )
         })}
+        <CircleMemoryOutcomes successes={successes} failures={failures} />
       </div>
     )
   }

@@ -39,7 +39,9 @@ export default class DataPoint extends React.Component {
       centerTransition,
       removeDataByKey,
       backgroundSize,
-      zIndex
+      zIndex,
+      incrementSuccess,
+      incrementFailure
     } = this.props
     
     return (
@@ -66,12 +68,16 @@ export default class DataPoint extends React.Component {
               position: 'relative',
               width: `${diameter}px`,
               height: `${diameter}px`,
-              lineHeight: `${diameter/2}px`,
+              // lineHeight: `${diameter/2}px`,
               transform: `translate(${radialDisplacement - (diameter / 2)}px,${-diameter / 2}px) rotate(-${rotationAngle}deg)`,
               zIndex,
               transition: 'transform 0.35s ease-in, width 0.35s ease-in, height 0.35s ease-in',
-              color: 'red',
-              textAlign: 'center'
+              color: '#2C3531',
+              fontWeight: '700',
+              textShadow: '1px 1px #D1E8E2',
+              textAlign: 'center',
+              fontSize: '1.5em',
+              textWrap: 'wrap'
             }
           }
           onClick={
@@ -84,22 +90,34 @@ export default class DataPoint extends React.Component {
           {(radialDisplacement === 0)? (<div
               style={{
                 width: `${diameter}px`,
-                height: `${diameter}px`
+                height: `${diameter}px`,
               }}
             >
             <div style={{
-              userSelect: 'none'
-            }}>{text}</div>
+              userSelect: 'none',              
+            }}><span
+              style={{
+                fontSize: ``,
+                backgroundColor: 'rgba(255,203,154,0.65)',
+                height: `${diameter / 3}px`,
+                lineHeight: `${diameter / 3}px`
+              }}
+            >Remember<br></br>{text.split('').slice(0,16).join('')+ '?'}</span></div>
             <button
               style={{
                 width: 7*diameter/18,
                 userSelect: 'none',
-                zIndex: zIndex+1
+                zIndex: zIndex+1,
+                padding: '0.25em',
+                backgroundColor: '#FFCB9A',
+                borderRadius: '0.5em',
+                marginRight: '0.5em'
               }}
               onClick={
                 ()=>{
                   removeDataByKey(text)
                   allowTransitions()
+                  incrementSuccess()
                 }
               }
             >
@@ -109,12 +127,16 @@ export default class DataPoint extends React.Component {
               style={{
                 width: 7*diameter/18,
                 userSelect: 'none',
-                zIndex: zIndex+1
+                zIndex: zIndex+1,
+                padding: '0.25em',
+                backgroundColor: '#D9B08C',
+                borderRadius: '0.5em'
               }}
               onClick={
                 ()=>{
                   removeDataByKey(text)
                   allowTransitions()
+                  incrementFailure()
                 }
               }
             >
