@@ -28,7 +28,7 @@ UI Behaviours include the following
     - Hardcode more data for testing - 50 unique data points
     - Success in one, Failure in another
 
-  ### Sprint 4
+  ### Sprint 4 -- In Progress
   Server-side data management
     - Design PSQL Schema
       - Tables
@@ -42,6 +42,22 @@ UI Behaviours include the following
     - Implement Schema in PSQL
       - Write Schema File
       - Write Seed & Cleanse files
+
+
+### Schema Design
+The initial schema design contains 5 tables
+- **Users**
+  - have many *DataCollections* 
+  - have many *GuessSessions*
+- **DataCollections**
+  - belong to a *User* (May need another table for sharing data collections between users)
+  - have many *DataPoints*
+- **GuessSessions**
+  - belong to a *User*
+  - belong to a *DataCollection*
+  - have many *Guesses*
+- **DataPoints**
+  - belong to a *DataCollection*
   
 
 ### Future Implementation

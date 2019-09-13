@@ -83,7 +83,7 @@ function App() {
       }}
     
     >
-      <DatasetContainer diameter={110} data={dataset1} parentWidth={100} parentHeight={100} parentWidthUnit={'vw'} parentHeightUnit={'vh'}/>
+      <DatasetContainer diameter={140} data={dataset1} parentWidth={100} parentHeight={100} parentWidthUnit={'vw'} parentHeightUnit={'vh'}/>
       {/* <FacebookLogin
     appId="1088597931155576"
     autoLoad={true}
