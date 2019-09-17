@@ -107,6 +107,6 @@ Live Demo: -- Pending implementation of backend
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
-* [Debugging - kasun-maldeni](https://github.com/kasun-maldeni)
-* [Debugging - DT (epoch)](https://github.com/epoch)
-* [README template - othnieldrew](https://github.com/othneildrew/Best-README-Template)
+* [kasun-maldeni - Debugging](https://github.com/kasun-maldeni)
+* [DT (epoch) - Debugging](https://github.com/epoch)
+* [othnieldrew - README template](https://github.com/othneildrew/Best-README-Template)
