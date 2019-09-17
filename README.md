@@ -99,7 +99,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Chris Hurt - chrishcoding@gmail.com
 
-Project Link: [https://github.com/ChrisHurt/repo_name](https://github.com/ChrisHurt/repo_name)
+Project Link: [https://github.com/ChrisHurt/repo_name](https://github.com/ChrisHurt/react-memorisation-app)
+
+Live Demo: -- Pending implementation of backend
 
 
 
