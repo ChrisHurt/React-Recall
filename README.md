@@ -1,11 +1,32 @@
 # React Memorisation App
 
-> A react app for remembering people's names (or other data) with a custom UI
+## Table of Contents
 
-## Demo of Application
-- This is currently under construction and a link will be placed here when ready.
+* [About the Project](#about-the-project)
+  * [Built With](#built-with)
+* [Roadmap](#roadmap)
+* [License](#license)
+* [Contact](#contact)
+* [Acknowledgements](#acknowledgements)
 
-## Initial Scope and Planning
+## About The Project
+
+A react app for remembering people's names and faces (or other data).
+
+What is this useful for?
+- Memorise people's names and faces
+- Memorise mushroom names based on their photos
+- Memorising any arbitrary pairing of text and photo you can imagine
+
+### Built With
+* [React](https://reactjs.org/)
+* [SASS](https://sass-lang.com/)
+* [Jest](https://jestjs.io/)
+* [MongoDB](https://www.mongodb.com/) -- Integration Pending
+* [Express](https://expressjs.com/) -- Integration Pending
+* [Node](https://nodejs.org/en/) -- Integration Pending
+
+## Roadmap
 ### Sprint 1 -- Completed 11/09/19
 The UI concept for representing the data is multiples circles packed within a larger circle
   - See: http://mathworld.wolfram.com/CirclePacking.html
@@ -68,5 +89,22 @@ Look into methods for collecting data to integrate into the UI for testing
     - Any other API's or accessible data that can be applied in this context - No suitable options found, Pending Decision
   - Look into methods for allowing user input and storage of this data as appropriate and if needed
     - Postgresql with node or ruby backend - Under consideration
-## Installation Instructions
-- This is currently under construction and a instructions will be placed here when ready.
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+<!-- CONTACT -->
+## Contact
+
+Chris Hurt - chrishcoding@gmail.com
+
+Project Link: [https://github.com/ChrisHurt/repo_name](https://github.com/ChrisHurt/repo_name)
+
+
+
+<!-- ACKNOWLEDGEMENTS -->
+## Acknowledgements
+* [Debugging - kasun-maldeni](https://github.com/kasun-maldeni)
+* [Debugging - DT (epoch)](https://github.com/epoch)
+* [README template - othnieldrew](https://github.com/othneildrew/Best-README-Template)
