@@ -99,7 +99,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Chris Hurt - chrishcoding@gmail.com
 
-Project Link: [https://github.com/ChrisHurt/repo_name](https://github.com/ChrisHurt/react-memorisation-app)
+Project Link: [https://github.com/ChrisHurt/React-Recall-Remember](https://github.com/ChrisHurt/React-Recall-Remember)
 
 Live Demo: -- Pending implementation of backend
 
