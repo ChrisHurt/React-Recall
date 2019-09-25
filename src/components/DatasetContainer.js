@@ -2,7 +2,7 @@ import React from 'react'
 import './DatasetContainer.scss'
 import DataPoint from './DataPoint'
 import CircleMemoryOutcomes from './CircleMemoryOutcomes'
-import CircleCalculations from './circleCalculations'
+import CircleCalculations from '../javascripts/circleCalculations'
 
 var tierSizes = [8,15,22]
 

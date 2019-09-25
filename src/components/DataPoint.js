@@ -2,23 +2,6 @@ import React from 'react'
 import './DataPoint.scss'
 export default class DataPoint extends React.Component {
 
-  // state = {
-  //   parentDiameter: this.props.parentDiameter,
-  //   diameter: this.props.diameter,
-  //   rotationAngle: this.props.rotationAngle,
-  //   radialDisplacement: this.props.radialDisplacement,
-  //   transformOrigin: this.props.transformOrigin,
-  //   transformOffset: this.props.transformOffset,
-  //   text: this.props.text,
-  //   image_url: this.props.image_url,
-  //   top: this.props.top,
-  //   left: this.props.left,
-  //   transitionAllowed: this.props.transitionAllowed,
-  //   preventTransitions: this.props.preventTransitions,
-  //   allowTransitions: this.props.allowTransitions,
-  //   expandDiameter: this.props.expandDiameter
-  // }
-
   render(){
     
     const {

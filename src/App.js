@@ -1,7 +1,6 @@
 import React from 'react';
-import DatasetContainer from './DatasetContainer'
+import DatasetContainer from './components/DatasetContainer'
 import './reset.css';
-// import FacebookLogin from 'react-facebook-login';
 
 // TODO
   // Hard-code all data and finish UI implementation
@@ -64,14 +63,6 @@ let dataset1 =  {
   // Michelle: 'https://images.unsplash.com/photo-1526080652727-5b77f74eacd2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60'
 
 
-}
-
-const responseFacebook = (response) => {
-  console.log(response);
-}
-
-const componentClicked = () => {
-  console.log('component clicked')
 }
 
 function App() {
