@@ -8,7 +8,7 @@ let DataCollection = require('../models/datacollection.model');
 router.route('/').get((req,res)=>{
   let sess = req.session;
   if(!sess.user_id){
-    res.status(404).json('You must be a valid user to add a collection.')
+    res.status(404).json('Action not allowed. Invalid user.')
   } else {
     DataCollection.find()
       .then(dataCollections => res.json(dataCollections))
@@ -20,7 +20,7 @@ router.route('/').get((req,res)=>{
 router.route('/:id').get((req,res)=>{
   let sess = req.session;
   if(!sess.user_id){
-    res.status(404).json('You must be a valid user to add a collection.')
+    res.status(404).json('Action not allowed. Invalid user.')
   } else {
     DataCollection.findById(req.params.id)
       .then(dataCollection => res.json(dataCollection))
@@ -32,7 +32,7 @@ router.route('/:id').get((req,res)=>{
 router.route('/add').post((req,res)=>{
   let sess = req.session;
   if(!sess.user_id){
-    res.status(404).json('You must be a valid user to add a collection.')
+    res.status(404).json('Action not allowed. Invalid user.')
   } else {
     const collectionName  = req.body.collectionName;
     const user_id = req.session.user_id
@@ -50,21 +50,23 @@ router.route('/add').post((req,res)=>{
 });
 
 // View all Data Points by Collection id
-router.route('/:collection_id').get((req,res)=>{
+router.route('/:collection_id/datapoints').get((req,res)=>{
+  let sess = req.session;
   if(!sess.user_id){
-    res.status(404).json('You must be a valid user to add a collection.')
-  } else {
-    DataPoint.findById(req.params.collection_id)
+    res.status(404).json('Action not allowed. Invalid user.')
+  }
+    DataCollection.findById(req.params.collection_id).then((dataCollection)=>{
+      DataPoint.find({dataCollection: dataCollection})
       .then(dataPoints => res.json(dataPoints))
       .catch(err => res.status(400).json(`Error: ${err}`));
-  }
+    })
 });
 
 // View data point by data point id
 router.route('/datapoints/:id').get((req,res)=>{
   let sess = req.session;
   if(!sess.user_id){
-    res.status(404).json('You must be a valid user to add a collection.')
+    res.status(404).json('Action not allowed. Invalid user.')
   } else {
     DataPoint.findById(req.params.id)
       .then(dataPoint => res.json(dataPoint))
@@ -76,11 +78,11 @@ router.route('/datapoints/:id').get((req,res)=>{
 router.route('/:collection_id/add').post((req,res)=>{
   let sess = req.session;
   if(!sess.user_id){
-    res.status(404).json('You must be a valid user to add a collection.')
+    res.status(404).json('Action not allowed. Invalid user.')
   } else {
     const memoryText  = req.body.memoryText;
     const imageUrl = req.body.imageUrl;
-    const dataCollection_id = req.params.collection_id
+    const dataCollection_id = req.params.collection_id 
     const newDataPoint = new DataPoint({memoryText, imageUrl, dataCollection: dataCollection_id});
   
     newDataPoint.save().then(()=>{

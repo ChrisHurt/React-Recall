@@ -27,7 +27,6 @@ router.route('/logout').post((req,res)=>{
     if(err){
         console.log(err);
     } else {
-        // res.redirect('/');
         res.status(200).json(`User logged out`)
     }
 });
