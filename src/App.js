@@ -1,5 +1,5 @@
 import React from 'react';
-import DatasetContainer from './components/DatasetContainer'
+import DatasetContainer from './components/datasetcontainer.component'
 import './reset.css';
 
 // TODO

@@ -1,7 +1,7 @@
 import React from 'react'
 import './DatasetContainer.scss'
-import DataPoint from './DataPoint'
-import CircleMemoryOutcomes from './CircleMemoryOutcomes'
+import DataPoint from './datapoint.component'
+import CircleMemoryOutcomes from './circlememoryoutcomes.component'
 import CircleCalculations from '../javascripts/circleCalculations'
 
 var tierSizes = [8,15,22]
