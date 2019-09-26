@@ -4,6 +4,7 @@ import DataPoint from './datapoint.component'
 import CircleMemoryOutcomes from './circlememoryoutcomes.component'
 import CircleCalculations from '../javascripts/circleCalculations'
 
+
 var tierSizes = [8,15,22]
 
 export default class DatasetContainer extends React.Component {

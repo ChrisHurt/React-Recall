@@ -19,6 +19,7 @@ app.use(session({
   saveUninitialized: false,
   resave: false
 }));
+
 app.use(cors());
 app.use(express.json());
 

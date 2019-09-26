@@ -5,14 +5,43 @@ let DataCollection = require('../models/datacollection.model');
 
 
 // View all Data Collections by loggedin user
-router.route('/').get((req,res)=>{
+router.route('/').post((req,res)=>{
   let sess = req.session;
-  if(!sess.user_id){
+  console.log(sess)
+  console.log()
+  console.log('req body')
+  console.log()
+  console.log(req.body)
+  console.log()
+  console.log('req params')
+  console.log()
+  console.log(req.params)
+  console.log()
+  console.log('res body')
+  console.log()
+  console.log(res.body)
+  console.log()
+  console.log('res params')
+  console.log()
+  console.log(res.params)
+  if(!sess.user_id && !req.body.user_id){
     res.status(404).json('Action not allowed. Invalid user.')
+
+    // Use hard-coded setup
+    // DataCollection.find({user: sess.user_id})
+    //   .then(dataCollections => res.json(dataCollections))
+    //   .catch(err => res.status(400).json(`Error: ${err}`));
+
   } else {
-    DataCollection.find()
+    if(!sess.user_id){
+      DataCollection.find({user: req.body.user_id})
       .then(dataCollections => res.json(dataCollections))
       .catch(err => res.status(400).json(`Error: ${err}`));
+    } else {
+      DataCollection.find({user: (sess.user_id)})
+        .then(dataCollections => res.json(dataCollections))
+        .catch(err => res.status(400).json(`Error: ${err}`));
+    }
   }
 });
 

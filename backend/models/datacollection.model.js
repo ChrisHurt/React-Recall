@@ -7,7 +7,7 @@ const dataCollectionSchema = new Schema({
     type: String,
     required: true,
     trim: true,
-    minlength: 1
+    // minlength: 1
   },
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   dataPoints: [{ type: Schema.Types.ObjectId, ref: 'DataPoint' }],

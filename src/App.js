@@ -1,6 +1,12 @@
 import React from 'react';
-import DatasetContainer from './components/datasetcontainer.component'
+import {BrowserRouter as Router, Route } from "react-router-dom"
 import './reset.css';
+
+import Navbar from "./components/navbar.component"
+import DatasetContainer from './components/datasetcontainer.component'
+import LoginRegisterForm from './components/loginregister.component'
+import DataCollections from './components/datacollections.component'
+
 
 // TODO
   // Hard-code all data and finish UI implementation
@@ -15,6 +21,7 @@ import './reset.css';
   // Manage user information through db
     // Initially use image urls
     // Implement Amazon S3 for drag & drop if there is time
+
 let dataset1 =  {    
   Daniel: 'https://images.unsplash.com/photo-1502791451862-7bd8c1df43a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
   Hinze: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80',
@@ -65,24 +72,41 @@ let dataset1 =  {
 
 }
 
-function App() {
-  return (
-    <div 
-      className="App"
-      style = {{
-        backgroundColor: '#D1E8E2'
-      }}
-    
-    >
-      <DatasetContainer diameter={140} data={dataset1} parentWidth={100} parentHeight={100} parentWidthUnit={'vw'} parentHeightUnit={'vh'}/>
-      {/* <FacebookLogin
-    appId="1088597931155576"
-    autoLoad={true}
-    fields="name,email,picture"
-    onClick={componentClicked}
-    callback={responseFacebook} /> */}
-    </div>
-  );
+class App extends React.Component {
+
+  state = {
+    user_id: null
+  }
+
+  updateUserID = (newID) => {
+    this.setState({
+      user_id: newID
+    })
+  }
+
+  render(){
+    return (
+      <Router>
+        <div 
+          className="App"
+          style = {{
+            backgroundColor: '#D1E8E2'
+          }}
+        >
+        <Navbar updateUserID={this.updateUserID}/>
+        <Route path="/login" exact component={()=><LoginRegisterForm user_id={this.state.user_id} updateUserID={this.updateUserID}/>} />
+          <Route path="/data_collections/me" exact component={() => <DataCollections user_id={this.state.user_id} updateUserID={this.updateUserID}/>} />
+  
+          <Route path="/data_collections/:id/practice" exact component={
+            ()=><DatasetContainer user_id={this.state.user_id} updateUserID={this.updateUserID} diameter={140} data={dataset1} parentWidth={100} parentHeight={100} parentWidthUnit={'vw'} parentHeightUnit={'vh'}/>
+          }/>
+  
+  
+  
+        </div>
+      </Router>
+    );
+  }
 }
 
 export default App;

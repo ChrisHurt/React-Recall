@@ -9,17 +9,32 @@ router.route('/login').post((req,res)=>{
     (users) => {
       if(users.length > 1){
         res.status(400).json(`Non-unique name identified - contact your database administrator`)
-      } else if (bcrypt.compareSync(req.body.password,users[0].password_digest)){
+      } else if (users[0] && bcrypt.compareSync(req.body.password,users[0].password_digest)){
         sess.user_id = users[0]._id
         sess.username = users[0].username
-        res.status(200).json(`User '${sess.username}' Authenticated`)
+
+        console.log()
+        console.log('session:')
+        console.log(sess)
+        console.log()
+
+        res.status(200).json({
+          msg: `User '${sess.username}' Authenticated`,
+          authenticated: true,
+          // Temporary Solution, not secure
+          user_id: users[0]._id
+        })
         
       } else {
-        res.status(400).json(`Invalid username or password`)
+        res.status(400).json({
+          msg: `Invalid username or password, not authenticated`,
+          authenticated: false,
+          user_id: ''
+        })
       }
     }
   )
-    .catch(err => res.status(400).json(`Error: ${err}`));
+  .catch(err => res.status(400).json(`Error: ${err}`));
 })
 
 router.route('/logout').post((req,res)=>{
