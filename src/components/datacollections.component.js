@@ -1,5 +1,5 @@
 import React from 'react'
-import './loginregister.component.scss'
+import './datacollections.component.scss'
 import axios from 'axios'
 // import { Redirect } from 'react-router-dom'
 
@@ -48,11 +48,42 @@ export default class DataCollections extends React.Component {
     }
   }
 
+  findWorstRecallInCollection = () => {
+    return 'worst'
+  }
+
+  findBestRecallInCollection = () => {
+    return 'best'
+  }
+
+  findAverageRecallInCollection = () => {
+    return 'average-st'
+  }
+
   render(){
     return (
-      <div>I am All the data collections
+      <div>
         {this.renderRedirect()}
-        {this.state.collections.map((collection,index)=> <div key={`collection${index}`}>{collection.collectionName}: {collection.collection_id}</div>)}
+        {this.state.collections.map((collection,index)=>
+        <div key={`collection${index}`} className="data-collection">
+          <div className="data-collection-name">{collection.collectionName}</div>
+          <div className="data-collection-metrics">
+            <div className="recall-data">
+              <div>Worst Recall:</div>
+              <div>{this.findWorstRecallInCollection()}</div>
+            </div>
+            <div className="recall-data">
+              <div>Best Recall:</div>
+              <div>{this.findBestRecallInCollection()}</div>
+            </div>
+            <div className="recall-data">
+              <div>Average Recall:</div>
+              <div>{this.findAverageRecallInCollection()}</div>
+            </div>
+          </div>
+          <div className="practice">Practice{/*collection.collection_id*/}</div>
+        </div>
+        )}
       </div>
     )
   }
