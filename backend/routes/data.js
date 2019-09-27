@@ -3,8 +3,412 @@ let User = require('../models/user.model');
 let DataPoint = require('../models/datapoint.model');
 let DataCollection = require('../models/datacollection.model');
 
+let Guess = require('../models/guess.model');
+let GuessSession = require('../models/guesssession.model');
 
-// View all Data Collections by loggedin user
+router.route('/metrics/:id').post((req,res)=>{
+  console.log('metrics being accessed')
+  let sess = req.session;
+    if(!sess.user_id && !req.body.user_id){
+      res.status(404).json('Action not allowed. Invalid user.')
+    } else {
+      
+      DataCollection.findById(req.params.id)
+        .then(dataCollection => {
+          GuessSession.find({dataCollection: dataCollection}).then(guessSessions=>{
+            // console.log(guessSessions);
+            Guess.find({guessSession: { "$in": guessSessions.map(guessSession=>guessSession._id)}}).then(guesses=>{
+              console.log()
+              console.log('guesses')
+              console.log(guesses);
+              console.log()
+              // res.status(200).json(guesses);
+              DataPoint.find({ guesses: { "$in": guesses.map(guess=>guess._id)} }).then(datapoints=> {
+                console.log()
+                console.log('datapoints')
+                console.log(datapoints);
+                console.log()
+
+                dataPointRecollections = guesses.reduce((evaluatedDatapoints,guess)=>{
+                  if(evaluatedDatapoints[guess.dataPoint] != null && evaluatedDatapoints[guess.dataPoint] != undefined ){
+                    if(guess.remembered == 1){
+                      evaluatedDatapoints[guess.dataPoint]['remembered'] += 1
+                    } else {
+                      evaluatedDatapoints[guess.dataPoint]['forgot'] += 1
+                    }
+                  } else {
+                    if(guess.remembered == 1){
+                      evaluatedDatapoints[guess.dataPoint] = {
+                        remembered: 1,
+                        forgot: 0
+                      }
+                    } else {
+                      evaluatedDatapoints[guess.dataPoint] = {
+                        remembered: 0,
+                        forgot: 1
+                      }
+                    }
+                  }
+                  return evaluatedDatapoints
+                },{})
+
+                console.log()
+                console.log('dataPointRecollections')
+                console.log(dataPointRecollections)
+                console.log()
+                
+
+                responseDatapoints = datapoints.map(dataPoint=>{
+
+                  //aa
+
+                  return {
+                    memoryText: dataPoint.memoryText,
+                    imageURL: dataPoint.imageUrl,
+                    remembered: dataPointRecollections[dataPoint._id].remembered,
+                    forgot: dataPointRecollections[dataPoint._id].forgot,
+                    averageRecall: Math.round(100* dataPointRecollections[dataPoint._id].remembered / (dataPointRecollections[dataPoint._id].remembered + dataPointRecollections[dataPoint._id].forgot))
+                  }
+                })
+
+                console.log()
+                console.log('responseDatapoints')
+                console.log(responseDatapoints)
+                console.log()
+
+                let worstRecall = responseDatapoints.reduce((currentWorstRecall, currentDataPoint)=>{
+                  if(currentDataPoint.averageRecall < currentWorstRecall.averageRecall){
+                    return {memoryText: currentDataPoint.memoryText, averageRecall: currentDataPoint.averageRecall}
+                  } else {
+                    return {memoryText: currentWorstRecall.memoryText, averageRecall: currentWorstRecall.averageRecall}
+                  }
+                },{ memoryText: "", averageRecall: 100 })
+
+                let bestRecall = responseDatapoints.reduce((currentWorstRecall, currentDataPoint)=>{
+                  if(currentDataPoint.averageRecall > currentWorstRecall.averageRecall){
+                    return {memoryText: currentDataPoint.memoryText, averageRecall: currentDataPoint.averageRecall}
+                  } else {
+                    return {memoryText: currentWorstRecall.memoryText, averageRecall: currentWorstRecall.averageRecall}
+                  }
+                },{ memoryText: "", averageRecall: 0 })
+
+                let averageRecall = 0;
+                if (responseDatapoints.length > 0){
+                  averageRecall = responseDatapoints.reduce((total, currentDataPoint)=>total + currentDataPoint.averageRecall,0) / responseDatapoints.length
+                }
+
+
+                console.log()
+                console.log('worstRecall')
+                console.log(worstRecall)
+                console.log()
+
+                console.log()
+                console.log('bestRecall')
+                console.log(bestRecall)
+                console.log()
+
+                console.log()
+                console.log('averageRecall')
+                console.log(averageRecall)
+                console.log()
+
+                res.status(200).json({
+                  datapoints: responseDatapoints,
+                  worstRecall,
+                  bestRecall,
+                  averageRecall
+                });
+              })
+            })
+          })
+        })
+        .catch(err => res.status(400).json(`Error: ${err}`));
+    }
+})
+
+// // View all Data Collections by loggedin user AND their metrics
+// router.route('/').post((req,res)=>{
+
+//   let sess = req.session;
+//   if(!sess.user_id && !req.body.user_id){
+//     res.status(404).json('Action not allowed. Invalid user.')
+//   } else {
+//     if(!sess.user_id){
+
+
+//       DataCollection.find({user: req.body.user_id})
+//       .then(dataCollections => {
+
+
+//         // let dc = async () => {
+//         //   return await Promise.all(
+//         //     dataCollections.map(async (dataCollection) => {
+//         //       return await getSingleCollection(dataCollection._id)  
+//         //     })
+//         //   )
+//         // }
+//         console.log()
+//         console.log('dataCollections')
+//         console.log(dataCollections)
+//         console.log()
+
+//         let dc = async () => {
+//           console.log('Dc Starting...')
+//           return await Promise.all(
+//             dataCollections.map((dataCollection) => anAsyncFunction(dataCollection._id))
+//           )
+//         }
+
+//         console.log()
+//         console.log('All Collection Data')
+
+//         dc().then(placeholder => {
+//           console.log(placeholder)
+//           res.status(200).json(placeholder) 
+//         })
+
+//         // const arbit = dc()
+//         // console.log(arbit)
+
+//       })
+//       .catch(err => res.status(400).json(`Error: ${err}`));
+      
+
+
+//     } else {
+//       DataCollection.find({user: (sess.user_id)})
+//         .then(dataCollections => res.json(dataCollections))
+//         .catch(err => res.status(400).json(`Error: ${err}`));
+//     }
+//   }
+// });
+
+// const anAsyncFunction = async item => {
+//   console.log('anAsyncFunction Starting...')
+//   return await getSingleCollection(item)
+// }
+
+// const getSingleCollection = async (collection_id) => {
+//   console.log('getSingleCollection Starting...')
+//   // let workDone = null;
+
+//   // return Promise.resolve(collection_id)
+
+//   // let singleCollection = new Promise((resolve,reject) => {
+//   //   if (workDone) {
+//   //     resolve(workDone)
+//   //   } else {
+//   //     const why = 'Still working on something else'
+//   //     reject(why)
+//   //   }
+//   // })
+
+//   let arbit = null
+
+//   await ( async() => {DataCollection.findById(collection_id)
+//     .then(dataCollection => {
+//       GuessSession.find({dataCollection: dataCollection}).then(guessSessions=>{
+//         Guess.find({guessSession: { "$in": guessSessions.map(guessSession=>guessSession._id)}}).then(guesses=>{
+//           DataPoint.find({ guesses: { "$in": guesses.map(guess=>guess._id)} }).then(datapoints=> {
+//             dataPointRecollections = guesses.reduce((evaluatedDatapoints,guess)=>{
+//               if(evaluatedDatapoints[guess.dataPoint] != null && evaluatedDatapoints[guess.dataPoint] != undefined ){
+//                 if(guess.remembered == 1){
+//                   evaluatedDatapoints[guess.dataPoint]['remembered'] += 1
+//                 } else {
+//                   evaluatedDatapoints[guess.dataPoint]['forgot'] += 1
+//                 }
+//               } else {
+//                 if(guess.remembered == 1){
+//                   evaluatedDatapoints[guess.dataPoint] = {
+//                     remembered: 1,
+//                     forgot: 0
+//                   }
+//                 } else {
+//                   evaluatedDatapoints[guess.dataPoint] = {
+//                     remembered: 0,
+//                     forgot: 1
+//                   }
+//                 }
+//               }
+//               return evaluatedDatapoints
+//             },{})
+
+//             responseDatapoints = datapoints.map(dataPoint=>{
+//               return {
+//                 memoryText: dataPoint.memoryText,
+//                 imageURL: dataPoint.imageUrl,
+//                 remembered: dataPointRecollections[dataPoint._id].remembered,
+//                 forgot: dataPointRecollections[dataPoint._id].forgot,
+//                 averageRecall: Math.round(100* dataPointRecollections[dataPoint._id].remembered / (dataPointRecollections[dataPoint._id].remembered + dataPointRecollections[dataPoint._id].forgot))
+//               }
+//             })
+
+//             let worstRecall = responseDatapoints.reduce((currentWorstRecall, currentDataPoint)=>{
+//               if(currentDataPoint.averageRecall < currentWorstRecall.averageRecall){
+//                 return {memoryText: currentDataPoint.memoryText, averageRecall: currentDataPoint.averageRecall}
+//               } else {
+//                 return {memoryText: currentWorstRecall.memoryText, averageRecall: currentWorstRecall.averageRecall}
+//               }
+//             },{ memoryText: "", averageRecall: 100 })
+
+//             let bestRecall = responseDatapoints.reduce((currentWorstRecall, currentDataPoint)=>{
+//               if(currentDataPoint.averageRecall > currentWorstRecall.averageRecall){
+//                 return {memoryText: currentDataPoint.memoryText, averageRecall: currentDataPoint.averageRecall}
+//               } else {
+//                 return {memoryText: currentWorstRecall.memoryText, averageRecall: currentWorstRecall.averageRecall}
+//               }
+//             },{ memoryText: "", averageRecall: 0 })
+
+//             let averageRecall = 0;
+//             if (responseDatapoints.length > 0){
+//               averageRecall = responseDatapoints.reduce((total, currentDataPoint)=>total + currentDataPoint.averageRecall,0) / responseDatapoints.length
+//             }
+            
+//             // console.log()
+//             // console.log('Single Collection Data')
+//             // console.log({
+//             //   collectionName: dataCollection.collectionName,
+//             //   datapoints: responseDatapoints,
+//             //   worstRecall,
+//             //   bestRecall,
+//             //   averageRecall
+//             // })
+
+//             // return {
+//             // workDone = {
+//             arbit =  {  
+//             collectionName: dataCollection.collectionName,
+//             datapoints: responseDatapoints,
+//             worstRecall,
+//             bestRecall,
+//             averageRecall
+//             }
+//           }).then(()=>{
+//             console.log()
+//             console.log('arbit')
+//             console.log(arbit)
+//             console.log()
+
+//             return arbit;
+//           }).then(async ()=>
+
+//           {return await Promise.resolve( arbit )}
+//           )
+//         })
+//       })
+//     })
+//   })()
+//   // .then(()=>
+
+//   // {return Promise.resolve( arbit )}
+//   // )
+
+//   // return Promise.resolve((async()=>{
+
+//   //   await DataCollection.findById(collection_id)
+//   //     .then(dataCollection => {
+//   //       GuessSession.find({dataCollection: dataCollection}).then(guessSessions=>{
+//   //         Guess.find({guessSession: { "$in": guessSessions.map(guessSession=>guessSession._id)}}).then(guesses=>{
+//   //           DataPoint.find({ guesses: { "$in": guesses.map(guess=>guess._id)} }).then(datapoints=> {
+//   //             dataPointRecollections = guesses.reduce((evaluatedDatapoints,guess)=>{
+//   //               if(evaluatedDatapoints[guess.dataPoint] != null && evaluatedDatapoints[guess.dataPoint] != undefined ){
+//   //                 if(guess.remembered == 1){
+//   //                   evaluatedDatapoints[guess.dataPoint]['remembered'] += 1
+//   //                 } else {
+//   //                   evaluatedDatapoints[guess.dataPoint]['forgot'] += 1
+//   //                 }
+//   //               } else {
+//   //                 if(guess.remembered == 1){
+//   //                   evaluatedDatapoints[guess.dataPoint] = {
+//   //                     remembered: 1,
+//   //                     forgot: 0
+//   //                   }
+//   //                 } else {
+//   //                   evaluatedDatapoints[guess.dataPoint] = {
+//   //                     remembered: 0,
+//   //                     forgot: 1
+//   //                   }
+//   //                 }
+//   //               }
+//   //               return evaluatedDatapoints
+//   //             },{})
+  
+//   //             responseDatapoints = datapoints.map(dataPoint=>{
+//   //               return {
+//   //                 memoryText: dataPoint.memoryText,
+//   //                 imageURL: dataPoint.imageUrl,
+//   //                 remembered: dataPointRecollections[dataPoint._id].remembered,
+//   //                 forgot: dataPointRecollections[dataPoint._id].forgot,
+//   //                 averageRecall: Math.round(100* dataPointRecollections[dataPoint._id].remembered / (dataPointRecollections[dataPoint._id].remembered + dataPointRecollections[dataPoint._id].forgot))
+//   //               }
+//   //             })
+  
+//   //             let worstRecall = responseDatapoints.reduce((currentWorstRecall, currentDataPoint)=>{
+//   //               if(currentDataPoint.averageRecall < currentWorstRecall.averageRecall){
+//   //                 return {memoryText: currentDataPoint.memoryText, averageRecall: currentDataPoint.averageRecall}
+//   //               } else {
+//   //                 return {memoryText: currentWorstRecall.memoryText, averageRecall: currentWorstRecall.averageRecall}
+//   //               }
+//   //             },{ memoryText: "", averageRecall: 100 })
+  
+//   //             let bestRecall = responseDatapoints.reduce((currentWorstRecall, currentDataPoint)=>{
+//   //               if(currentDataPoint.averageRecall > currentWorstRecall.averageRecall){
+//   //                 return {memoryText: currentDataPoint.memoryText, averageRecall: currentDataPoint.averageRecall}
+//   //               } else {
+//   //                 return {memoryText: currentWorstRecall.memoryText, averageRecall: currentWorstRecall.averageRecall}
+//   //               }
+//   //             },{ memoryText: "", averageRecall: 0 })
+  
+//   //             let averageRecall = 0;
+//   //             if (responseDatapoints.length > 0){
+//   //               averageRecall = responseDatapoints.reduce((total, currentDataPoint)=>total + currentDataPoint.averageRecall,0) / responseDatapoints.length
+//   //             }
+              
+//   //             console.log()
+//   //             console.log('Single Collection Data')
+//   //             console.log({
+//   //               collectionName: dataCollection.collectionName,
+//   //               datapoints: responseDatapoints,
+//   //               worstRecall,
+//   //               bestRecall,
+//   //               averageRecall
+//   //             })
+  
+//   //             // return {
+//   //             // workDone = {
+//   //             arbit =  {  
+//   //             collectionName: dataCollection.collectionName,
+//   //             datapoints: responseDatapoints,
+//   //             worstRecall,
+//   //             bestRecall,
+//   //             averageRecall
+//   //             }
+//   //           }).then(()=>{
+//   //             // console.log()
+//   //             // console.log('arbit')
+//   //             // console.log(arbit)
+//   //             // console.log()
+  
+//   //             return arbit;
+//   //           })
+//   //         })
+//   //       })
+//   //     })
+//   //     return arbit
+//   //     return 'toot'
+//   // })()
+
+//   // )
+
+
+//     // return await Promise.all([singleCollection]);
+//     // return singleCollection;
+// }
+
+
+
+// View all Data Collections by loggedin user -- Deprecated
 router.route('/').post((req,res)=>{
   let sess = req.session;
   console.log(sess)
@@ -26,12 +430,6 @@ router.route('/').post((req,res)=>{
   console.log(res.params)
   if(!sess.user_id && !req.body.user_id){
     res.status(404).json('Action not allowed. Invalid user.')
-
-    // Use hard-coded setup
-    // DataCollection.find({user: sess.user_id})
-    //   .then(dataCollections => res.json(dataCollections))
-    //   .catch(err => res.status(400).json(`Error: ${err}`));
-
   } else {
     if(!sess.user_id){
       DataCollection.find({user: req.body.user_id})

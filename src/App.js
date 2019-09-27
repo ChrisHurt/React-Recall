@@ -97,7 +97,7 @@ class App extends React.Component {
         <Route path="/login" exact component={()=><LoginRegisterForm user_id={this.state.user_id} updateUserID={this.updateUserID}/>} />
           <Route path="/data_collections/me" exact component={() => <DataCollections user_id={this.state.user_id} updateUserID={this.updateUserID}/>} />
   
-          <Route path="/data_collections/:id/practice" exact component={
+          <Route path="/practice/:collection_id/:session_id" component={
             ()=><DatasetContainer user_id={this.state.user_id} updateUserID={this.updateUserID} diameter={140} data={dataset1} parentWidth={100} parentHeight={100} parentWidthUnit={'vw'} parentHeightUnit={'vh'}/>
           }/>
   

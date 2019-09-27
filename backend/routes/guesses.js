@@ -70,6 +70,43 @@ router.route('/:guess_session_id/guesses').get((req,res)=>{
     })
 });
 
+// View all guess sessions belonging to a user and data collection
+router.route('/data-collection/:collection_id').post((req,res)=>{
+
+  let sess = req.session;
+  if(!sess.user_id && !req.body.user_id){
+      res.status(404).json('Action not allowed. Invalid user.')
+  } else {
+
+    GuessSession.find({dataCollection: req.params.collection_id, user: req.body.user_id}).then((guessSessions)=>{
+      // res.json(guessSessions)
+
+      DataCollection.findById(req.params.collection_id).then((dataCollection)=>{
+        // Find if there is an incomplete session
+        // If guess > datapoints
+        let gs = guessSessions.filter((guessSession)=>{
+          console.log('guesses length')
+          console.log(guessSession.guesses.length)
+          console.log('Data Length')
+          console.log(dataCollection.dataPoints.length)
+          return (guessSession.guesses.length < dataCollection.dataPoints.length)
+        })
+        
+        res.json({
+          guessSession: (gs.length > 0) ? (gs[0]): (false)
+        })
+
+        // res.json({
+        //   guesses: dataCollection.dataPoints.length,
+        //   dataPoints: dataCollection.dataPoints.length
+        // })
+      })
+
+
+    })
+  }
+});
+
 // View a guess by its' ID
 router.route('/guesses/:id').get((req,res)=>{
   let sess = req.session;
@@ -90,7 +127,7 @@ router.route('/:guess_session_id/:datapoint_id/add').post((req,res)=>{
   const remembered  = req.body.remembered;
   const guess_session_id = req.params.guess_session_id
   const datapoint_id = req.params.datapoint_id
-  const newGuess = new Guess({remembered, guessSession: guess_session_id});
+  const newGuess = new Guess({remembered, guessSession: guess_session_id, dataPoint: datapoint_id});
 
   newGuess.save().then(()=>{
     GuessSession.findById(guess_session_id).then(
