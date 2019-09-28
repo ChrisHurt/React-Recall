@@ -58,8 +58,6 @@ export default class LoginRegister extends React.Component {
     const loginData = { username: this.state.loginUsername, password: this.state.loginPassword }
     axios.post('http://localhost:5000/login',loginData).then(res => {
       if(res.data.authenticated){
-        console.log(res.data.user_id)
-
         this.props.updateUserID(res.data.user_id)
         
       } else {
