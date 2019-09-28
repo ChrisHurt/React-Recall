@@ -6,20 +6,24 @@ import axios from 'axios'
 export default class Navbar extends React.Component {
 
   logout = (e) => {
-    e.preventDefault()
+    // e.preventDefault()
     axios.post('http://localhost:5000/logout').then(()=>{
-      this.props.updateUserID()
-      window.location = '/login'
+      this.props.updateUserID(undefined)
+      // window.location = '/login'
     })
   }
 
   render(){
     return (
-      <nav className='navbar'>
-        <Link to="/" className="navbar-brand">React. Recall.</Link>
-        <Link to="/data_collections/new" className="navbar-link">New Collection</Link>
-        <Link to="/data_collections/me"  className="navbar-link">My Collections</Link>
-        <button onClick={this.logout}className="logout-button">Logout</button>
+      <nav style={{}}>
+        {(this.props.user_id !== undefined) ? 
+          (<div className='navbar'>
+            <Link to="/data_collections/me" className="navbar-brand">React. Recall.</Link>
+            <Link to="/data_collections/new" className="navbar-link">New Collection</Link>
+            <Link to="/data_collections/me"  className="navbar-link">My Collections</Link>
+            <button onClick={this.logout} className="logout-button">Logout</button>
+          </div>)
+          : ''}
       </nav>
     )
   }
