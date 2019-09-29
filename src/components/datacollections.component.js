@@ -44,7 +44,7 @@ export default class DataCollections extends React.Component {
   }
   renderRedirectToPractice = () => {
     if(this.state.redirectURL.collectionID !== undefined){
-      return <Redirect to={`/practice/${this.state.redirectURL.collectionID}/${(this.state.redirectURL.sessionID) ? (this.state.redirectURL.sessionID) : ('new')}`}/>
+      return <Redirect to={`/React-Recall/practice/${this.state.redirectURL.collectionID}/${(this.state.redirectURL.sessionID) ? (this.state.redirectURL.sessionID) : ('new')}`}/>
     }
   }
 

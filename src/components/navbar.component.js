@@ -18,9 +18,9 @@ export default class Navbar extends React.Component {
       <nav style={{}}>
         {(this.props.user_id !== undefined) ? 
           (<div className='navbar'>
-            <Link to="/data_collections/me" className="navbar-brand">React. Recall.</Link>
-            <Link to="/data_collections/new" className="navbar-link">New Collection</Link>
-            <Link to="/data_collections/me"  className="navbar-link">My Collections</Link>
+            <Link to="/React-Recall/data_collections/me" className="navbar-brand">React. Recall.</Link>
+            <Link to="/React-Recall/data_collections/new" className="navbar-link">New Collection</Link>
+            <Link to="/React-Recall/data_collections/me"  className="navbar-link">My Collections</Link>
             <button onClick={this.logout} className="logout-button">Logout</button>
           </div>)
           : ''}

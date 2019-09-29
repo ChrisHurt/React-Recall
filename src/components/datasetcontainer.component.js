@@ -308,7 +308,7 @@ export default class DatasetContainer extends React.Component {
 
   redirectOnFinish = () => {
     if(this.state.redirecting){
-      return <Redirect to='/data_collections/me'/>
+      return <Redirect to='/React-Recall/data_collections/me'/>
     }
   }
 

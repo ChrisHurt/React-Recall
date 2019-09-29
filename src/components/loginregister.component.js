@@ -48,7 +48,7 @@ export default class LoginRegister extends React.Component {
   
   renderRedirect = () => {
     if(this.props.user_id !== null && this.props.user_id !== undefined){
-      return <Redirect to='/data_collections/me'/>
+      return <Redirect to='/React-Recall/data_collections/me'/>
     }
   }
 
