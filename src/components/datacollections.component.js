@@ -1,14 +1,15 @@
 import React from 'react'
 import './datacollections.component.scss'
 import axios from 'axios'
-import { Redirect } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 
 export default class DataCollections extends React.Component {
 
   state = {
     collections: [],
     metrics: {},
-    redirectURL: {}
+    redirectURL: {},
+    loading: true
   }
 
   componentDidMount = () => {
@@ -16,14 +17,28 @@ export default class DataCollections extends React.Component {
     .then((res)=>{
 
         this.setState({
-          collections: res.data.map((dataCollection,index) => {
+          // collections: res.data.map((dataCollection,index) => {
+          //   return {
+          //     collectionName: dataCollection.collectionName,
+          //     collection_id: dataCollection._id,
+          //     highlighted: false,
+          //     index
+          //   }
+          // })
+          collections: res.data.filter(dataCollection=>{
+            if(dataCollection.dataPoints.length === 0){
+              return false;
+            }
+            return true
+          }).map((dataCollection,index) => {
             return {
               collectionName: dataCollection.collectionName,
               collection_id: dataCollection._id,
               highlighted: false,
               index
             }
-          })
+          }),
+          loading: false
         })
     }).catch(err=>console.log(`${err}`))
   }
@@ -36,7 +51,7 @@ export default class DataCollections extends React.Component {
   renderRedirect = () => {
     if(this.props.user_id === null || this.props.user_id === null){
       // return <Redirect to='/login'/>
-      window.location = '/login'
+      // window.location = '/login'
     }
   }
 
@@ -48,7 +63,7 @@ export default class DataCollections extends React.Component {
     let sessionID = null
 
     
-      if(res.data.guessSession !== false){
+      if(res.data.guessSession !== undefined && res.data.guessSession !== false){
         // set the session ID
         sessionID = res.data.guessSession._id
       }
@@ -102,6 +117,7 @@ export default class DataCollections extends React.Component {
           <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.bestRecall}</div>
           <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.worstRecall}</div>
         </div>
+        {this.state.collections.length === 0 && !this.state.loading  ? <div className="make-collection-link-container"><Link className="make-collection-link" to='/data_collections/new'> Make a collection! </Link></div> : ''}
         {this.state.collections.map((collection,index)=>
         <div key={`collection${index}`} className={`data-collection ${(collection.highlighted) ? ('highlighted-collection') : ('')}`} >
           <div className="data-collection-name">{collection.collectionName}</div>

@@ -1,6 +1,14 @@
 import React from 'react'
 import './DataPoint.scss'
+import axios from 'axios'
+
+
 export default class DataPoint extends React.Component {
+
+  state = {
+    axiosRequestSent: false
+  }
+
 
   render(){
     
@@ -24,7 +32,9 @@ export default class DataPoint extends React.Component {
       backgroundSize,
       zIndex,
       incrementSuccess,
-      incrementFailure
+      incrementFailure,
+      recordGuess
+      
     } = this.props
     
     return (
@@ -98,9 +108,10 @@ export default class DataPoint extends React.Component {
               }}
               onClick={
                 ()=>{
-                  removeDataByKey(text)
+                  removeDataByKey(this.props.id,1)
                   allowTransitions()
                   incrementSuccess()
+                  // this.props.recordGuess(1,this.props.id,text)
                 }
               }
             >
@@ -117,9 +128,10 @@ export default class DataPoint extends React.Component {
               }}
               onClick={
                 ()=>{
-                  removeDataByKey(text)
+                  removeDataByKey(this.props.id,0)
                   allowTransitions()
                   incrementFailure()
+                  // this.props.recordGuess(0,this.props.id,text)
                 }
               }
             >

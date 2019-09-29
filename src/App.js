@@ -1,12 +1,13 @@
 import React from 'react';
 import {BrowserRouter as Router, Route } from "react-router-dom"
+import { Redirect } from 'react-router-dom'
 import './reset.css';
 
 import Navbar from "./components/navbar.component"
 import DatasetContainer from './components/datasetcontainer.component'
 import LoginRegisterForm from './components/loginregister.component'
 import DataCollections from './components/datacollections.component'
-
+import NewCollectionForm from './components/newcollectionform.component'
 
 // TODO
   // Hard-code all data and finish UI implementation
@@ -23,13 +24,14 @@ import DataCollections from './components/datacollections.component'
     // Implement Amazon S3 for drag & drop if there is time
 
 let dataset1 =  {    
-  Daniel: 'https://images.unsplash.com/photo-1502791451862-7bd8c1df43a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
-  Hinze: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80',
-  Erik: 'https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1404&q=80',
-  Bater: 'https://images.unsplash.com/photo-1535441577682-5a7bc0702a7d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1534&q=80',
-  Sarah: 'https://images.unsplash.com/photo-1535324492437-d8dea70a38a7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1374&q=80',
-  Gemima: 'https://images.unsplash.com/photo-1521252659862-eec69941b071?ixlib=rb-1.2.1&auto=format&fit=crop&w=1480&q=80',
-  Warren: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
+    Placeholder: ''
+  // Daniel: 'https://images.unsplash.com/photo-1502791451862-7bd8c1df43a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
+  // Hinze: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80',
+  // Erik: 'https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1404&q=80',
+  // Bater: 'https://images.unsplash.com/photo-1535441577682-5a7bc0702a7d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1534&q=80',
+  // Sarah: 'https://images.unsplash.com/photo-1535324492437-d8dea70a38a7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1374&q=80',
+  // Gemima: 'https://images.unsplash.com/photo-1521252659862-eec69941b071?ixlib=rb-1.2.1&auto=format&fit=crop&w=1480&q=80',
+  // Warren: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
   // Mohammed: 'https://images.unsplash.com/photo-1484515991647-c5760fcecfc7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
   // Drew: 'https://images.unsplash.com/photo-1480455624313-e29b44bbfde1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
   // Atikh: 'https://images.unsplash.com/photo-1471015060382-6cbd8b4e34d0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60',
@@ -75,7 +77,7 @@ let dataset1 =  {
 class App extends React.Component {
 
   state = {
-    user_id: null
+    user_id: undefined
   }
 
   updateUserID = (newID) => {
@@ -84,24 +86,30 @@ class App extends React.Component {
     })
   }
 
+  renderLoginReturn = () => {
+    if(this.state.user_id === undefined){
+      return <Redirect to='/login' />
+    }
+  }
+
   render(){
     return (
       <Router>
+        {this.renderLoginReturn()}
         <div 
           className="App"
           style = {{
             backgroundColor: '#D1E8E2'
           }}
         >
-        <Navbar updateUserID={this.updateUserID}/>
+        <Navbar user_id={this.state.user_id} updateUserID={this.updateUserID}/>
         <Route path="/login" exact component={()=><LoginRegisterForm user_id={this.state.user_id} updateUserID={this.updateUserID}/>} />
           <Route path="/data_collections/me" exact component={() => <DataCollections user_id={this.state.user_id} updateUserID={this.updateUserID}/>} />
+          <Route path="/data_collections/new" exact component={()=><NewCollectionForm user_id={this.state.user_id} />} />
   
           <Route path="/practice/:collection_id/:session_id" component={
-            ()=><DatasetContainer user_id={this.state.user_id} updateUserID={this.updateUserID} diameter={140} data={dataset1} parentWidth={100} parentHeight={100} parentWidthUnit={'vw'} parentHeightUnit={'vh'}/>
+            ({match})=><DatasetContainer match = {match} user_id={this.state.user_id} updateUserID={this.updateUserID} diameter={140} data={dataset1} parentWidth={100} parentHeight={100} parentWidthUnit={'vw'} parentHeightUnit={'vh'}/>
           }/>
-  
-  
   
         </div>
       </Router>

@@ -1,3 +1,20 @@
+.make-collection-link-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 2.6em);
+}
+
+.make-collection-link{
+  text-align: center;
+  font-size: 1.3em;
+  color: #D1E8E2;
+  padding: 0.8em;
+  border-radius: 0.2em;
+  background-color: #2C3531;
+  text-decoration: none;
+}
+
 .data-collection{
   display: flex;
   width: calc(100% - 2em);
