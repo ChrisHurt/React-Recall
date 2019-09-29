@@ -1,6 +1,5 @@
 {
-  // "root": "public",
-  "root": "dist/",
+  "root": "public/",
   "routes": {
     "/**": "index.html"
   }
