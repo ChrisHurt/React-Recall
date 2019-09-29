@@ -1,5 +1,6 @@
 {
-  "name": "react-memorisation-tools",
+  "name": "react-recall",
+  "homepage": "https://react-recall.herokuapp.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
