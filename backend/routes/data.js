@@ -7,7 +7,6 @@ let Guess = require('../models/guess.model');
 let GuessSession = require('../models/guesssession.model');
 
 router.route('/metrics/:id').post((req,res)=>{
-  console.log('metrics being accessed')
   let sess = req.session;
     if(!sess.user_id && !req.body.user_id){
       res.status(404).json('Action not allowed. Invalid user.')
@@ -16,19 +15,8 @@ router.route('/metrics/:id').post((req,res)=>{
       DataCollection.findById(req.params.id)
         .then(dataCollection => {
           GuessSession.find({dataCollection: dataCollection}).then(guessSessions=>{
-            // console.log(guessSessions);
             Guess.find({guessSession: { "$in": guessSessions.map(guessSession=>guessSession._id)}}).then(guesses=>{
-              console.log()
-              console.log('guesses')
-              console.log(guesses);
-              console.log()
-              // res.status(200).json(guesses);
               DataPoint.find({ guesses: { "$in": guesses.map(guess=>guess._id)} }).then(datapoints=> {
-                console.log()
-                console.log('datapoints')
-                console.log(datapoints);
-                console.log()
-
                 dataPointRecollections = guesses.reduce((evaluatedDatapoints,guess)=>{
                   if(evaluatedDatapoints[guess.dataPoint] != null && evaluatedDatapoints[guess.dataPoint] != undefined ){
                     if(guess.remembered == 1){
@@ -52,29 +40,16 @@ router.route('/metrics/:id').post((req,res)=>{
                   return evaluatedDatapoints
                 },{})
 
-                console.log()
-                console.log('dataPointRecollections')
-                console.log(dataPointRecollections)
-                console.log()
-                
-
                 responseDatapoints = datapoints.map(dataPoint=>{
-
-                  //aa
 
                   return {
                     memoryText: dataPoint.memoryText,
                     imageURL: dataPoint.imageUrl,
                     remembered: dataPointRecollections[dataPoint._id].remembered,
                     forgot: dataPointRecollections[dataPoint._id].forgot,
-                    averageRecall: Math.round(100* dataPointRecollections[dataPoint._id].remembered / (dataPointRecollections[dataPoint._id].remembered + dataPointRecollections[dataPoint._id].forgot))
+                    averageRecall: Math.round(100 * dataPointRecollections[dataPoint._id].remembered / (dataPointRecollections[dataPoint._id].remembered + dataPointRecollections[dataPoint._id].forgot))
                   }
                 })
-
-                console.log()
-                console.log('responseDatapoints')
-                console.log(responseDatapoints)
-                console.log()
 
                 let worstRecall = responseDatapoints.reduce((currentWorstRecall, currentDataPoint)=>{
                   if(currentDataPoint.averageRecall < currentWorstRecall.averageRecall){
@@ -94,24 +69,8 @@ router.route('/metrics/:id').post((req,res)=>{
 
                 let averageRecall = 0;
                 if (responseDatapoints.length > 0){
-                  averageRecall = responseDatapoints.reduce((total, currentDataPoint)=>total + currentDataPoint.averageRecall,0) / responseDatapoints.length
+                  averageRecall = Math.round(responseDatapoints.reduce((total, currentDataPoint)=>total + currentDataPoint.averageRecall,0) / responseDatapoints.length)
                 }
-
-
-                console.log()
-                console.log('worstRecall')
-                console.log(worstRecall)
-                console.log()
-
-                console.log()
-                console.log('bestRecall')
-                console.log(bestRecall)
-                console.log()
-
-                console.log()
-                console.log('averageRecall')
-                console.log(averageRecall)
-                console.log()
 
                 res.status(200).json({
                   datapoints: responseDatapoints,
@@ -408,26 +367,9 @@ router.route('/metrics/:id').post((req,res)=>{
 
 
 
-// View all Data Collections by loggedin user -- Deprecated
+// View all Data Collections by loggedin user
 router.route('/').post((req,res)=>{
   let sess = req.session;
-  console.log(sess)
-  console.log()
-  console.log('req body')
-  console.log()
-  console.log(req.body)
-  console.log()
-  console.log('req params')
-  console.log()
-  console.log(req.params)
-  console.log()
-  console.log('res body')
-  console.log()
-  console.log(res.body)
-  console.log()
-  console.log('res params')
-  console.log()
-  console.log(res.params)
   if(!sess.user_id && !req.body.user_id){
     res.status(404).json('Action not allowed. Invalid user.')
   } else {
@@ -458,18 +400,21 @@ router.route('/:id').get((req,res)=>{
 // Add a data collection
 router.route('/add').post((req,res)=>{
   let sess = req.session;
-  if(!sess.user_id){
+  if(!sess.user_id && !req.body.user_id){
     res.status(404).json('Action not allowed. Invalid user.')
   } else {
     const collectionName  = req.body.collectionName;
-    const user_id = req.session.user_id
+    const user_id = req.body.user_id
     const newDataCollection = new DataCollection({collectionName, user: user_id});
   
     newDataCollection.save()
       .then(()=> {
         User.findById(user_id).then((user)=>{
           user.dataCollections = [...user.dataCollections,newDataCollection._id]
-          user.save().then(()=>res.json(`Data Collection '${collectionName}' added to user: '${user.username}'`))
+          user.save().then(()=>res.json({
+            msg: `Data Collection '${collectionName}' added to user: '${user.username}'`,
+            collection_id: newDataCollection._id
+          }))
         })
       })
       .catch(err => res.status(400).json(`Error ${err}`))
@@ -477,16 +422,20 @@ router.route('/add').post((req,res)=>{
 });
 
 // View all Data Points by Collection id
-router.route('/:collection_id/datapoints').get((req,res)=>{
+router.route('/:collection_id/datapoints').post((req,res)=>{
+  console.log('collection datapoints being accessed')
   let sess = req.session;
-  if(!sess.user_id){
+  if(!sess.user_id && !req.body.user_id){
     res.status(404).json('Action not allowed. Invalid user.')
-  }
+  } else {
     DataCollection.findById(req.params.collection_id).then((dataCollection)=>{
       DataPoint.find({dataCollection: dataCollection})
-      .then(dataPoints => res.json(dataPoints))
+      .then(dataPoints => res.json({
+        dataPoints
+      }))
       .catch(err => res.status(400).json(`Error: ${err}`));
     })
+  }
 });
 
 // View data point by data point id
@@ -504,7 +453,7 @@ router.route('/datapoints/:id').get((req,res)=>{
 // Add a data point to a collection by collection id
 router.route('/:collection_id/add').post((req,res)=>{
   let sess = req.session;
-  if(!sess.user_id){
+  if(!sess.user_id && !req.body.user_id){
     res.status(404).json('Action not allowed. Invalid user.')
   } else {
     const memoryText  = req.body.memoryText;
