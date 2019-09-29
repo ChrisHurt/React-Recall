@@ -117,7 +117,7 @@ export default class DataCollections extends React.Component {
           <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.bestRecall}</div>
           <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.worstRecall}</div>
         </div>
-        {this.state.collections.length === 0 && !this.state.loading  ? <div className="make-collection-link-container"><Link className="make-collection-link" to='/data_collections/new'> Make a collection! </Link></div> : ''}
+        {this.state.collections.length === 0 && !this.state.loading  ? <div className="make-collection-link-container"><Link className="make-collection-link" to='/React-Recall/data_collections/new'> Make a collection! </Link></div> : ''}
         {this.state.collections.map((collection,index)=>
         <div key={`collection${index}`} className={`data-collection ${(collection.highlighted) ? ('highlighted-collection') : ('')}`} >
           <div className="data-collection-name">{collection.collectionName}</div>

@@ -3,6 +3,8 @@ import $ from 'jquery'
 import axios from 'axios'
 import './newcollectionform.component.scss'
 
+import {Redirect} from 'react-router-dom'
+
 export default class NewCollectionForm extends React.Component {
 
   state = {
@@ -10,7 +12,8 @@ export default class NewCollectionForm extends React.Component {
     collectionID: '',
     memoryText: '',
     imageURL: '',
-    diameter: 100
+    diameter: 100,
+    redirecting: false
   }
 
   addToCollection = () => {
@@ -27,6 +30,18 @@ export default class NewCollectionForm extends React.Component {
           imageURL: ''
         })
       })
+  }
+
+  prepareToSubmitCollection = () => {
+    this.setState({
+      redirecting: true
+    })
+  }
+
+  submitCollection = () => {
+    if(this.state.redirecting){
+      return <Redirect to='/React-Recall/data_collections/me'/>
+    }
   }
 
   onChangeMemoryText = (e) => {
@@ -62,6 +77,7 @@ export default class NewCollectionForm extends React.Component {
   render(){
     return (
       <div className="login-page">
+        {this.submitCollection()}
       <div className="form">
         <form className="register-form">
           <h3>{this.state.collectionName}</h3>
@@ -102,7 +118,7 @@ export default class NewCollectionForm extends React.Component {
           </button>
           <button
             type="button"
-            onClick={this.submitCollection}
+            onClick={this.prepareToSubmitCollection}
           >
             Submit Collection
           </button>
