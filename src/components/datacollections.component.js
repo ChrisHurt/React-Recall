@@ -18,7 +18,11 @@ export default class DataCollections extends React.Component {
     },
     redirectURL: {},
     loading: true,
-    firstLoad: true
+    firstLoad: true,
+    expandedCollection: {
+      key: null,
+      data: [] // populate with imageurl's
+    }
   }
 
   componentDidMount = () => {
@@ -52,7 +56,7 @@ export default class DataCollections extends React.Component {
     }).catch(err=>console.log(`${err}`))
   }
   renderRedirectToPractice = () => {
-    if(this.state.redirectURL.collectionID !== undefined){
+    if(this.state.redirectURL.collectionID !== undefined && this.state.redirectURL.sessionID){
       return <Redirect to={`/React-Recall/practice/${this.state.redirectURL.collectionID}/${(this.state.redirectURL.sessionID) ? (this.state.redirectURL.sessionID) : ('new')}`}/>
     }
   }
@@ -139,9 +143,9 @@ export default class DataCollections extends React.Component {
     }).catch(err=>console.log(`${err}`))
     this.setState({
       metrics: {
-        collectionName: '',
+        collectionName: 'Loading...',
         worstRecall: '',
-        averageRecall: 'Loading...',
+        averageRecall: '',
         bestRecall: ''
       }
     })
@@ -155,9 +159,9 @@ export default class DataCollections extends React.Component {
         {this.updateSessionResults()}
         <div className="metrics-display">
           <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall recall-title">{(this.state.metrics.collectionName) ? (this.state.metrics.collectionName.toUpperCase()) : ('')}</div>
-          <div style={(this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">{(this.state.metrics.averageRecall)}</div>
-          <div style={(this.state.metrics.bestRecall) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.bestRecall}</div>
-          <div style={(this.state.metrics.worstRecall) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.worstRecall}</div>
+          <div style={(this.state.metrics.collectionName && this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">{(this.state.metrics.averageRecall)}</div>
+          <div style={(this.state.metrics.collectionName && this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.bestRecall}</div>
+          <div style={(this.state.metrics.collectionName && this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.worstRecall}</div>
         </div>
         {this.state.collections.length === 0 && !this.state.loading  ? <div className="make-collection-link-container"><Link className="make-collection-link" to='/React-Recall/data_collections/new'> Make a collection! </Link></div> : ''}
         <div className="collections-wrapper">
@@ -165,7 +169,7 @@ export default class DataCollections extends React.Component {
           <div key={`collection${index}`} className={`data-collection ${(collection.highlighted) ? ('highlighted-collection') : ('')}`} >
             <div className="data-collection-name">
               <div>{collection.collectionName}</div>
-              <i class="fas fa-chevron-down"></i>
+              <i className="fas fa-chevron-down"></i>
             </div>
 
             <div onClick={()=>this.getMetrics(index,collection.collection_id)} className={`data-collection-metrics`}>
