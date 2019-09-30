@@ -3,17 +3,26 @@ import './datacollections.component.scss'
 import axios from 'axios'
 import { Redirect, Link } from 'react-router-dom'
 
+let domainName = 'https://react-recall-be.herokuapp.com'
+
 export default class DataCollections extends React.Component {
 
   state = {
     collections: [],
-    metrics: {},
+    metrics: {
+      collectionName: '',
+      worstRecall: '',
+      averageRecall: '',
+      bestRecall: ''
+      //  this.props.recentSession.collectionName ? `Recently Guessed ${this.props.recentSession.correctGuesses} of ${this.props.recentSession.correctGuesses + this.props.recentSession.incorrectGuesses} Correctly.` : ''
+    },
     redirectURL: {},
-    loading: true
+    loading: true,
+    firstLoad: true
   }
 
   componentDidMount = () => {
-      axios.post(`http://localhost:5000/datacollections`,{user_id: this.props.user_id})
+      axios.post(`${domainName}/datacollections`,{user_id: this.props.user_id})
     .then((res)=>{
 
         this.setState({
@@ -58,7 +67,7 @@ export default class DataCollections extends React.Component {
   beginGuessSession = (collection_id) => {
     // TODO
     // Make Axios Request here
-    axios.post(`http://localhost:5000/guess-sessions/data-collection/${collection_id}`,{user_id: this.props.user_id}).then((res)=>{
+    axios.post(`${domainName}/guess-sessions/data-collection/${collection_id}`,{user_id: this.props.user_id}).then((res)=>{
     
     let sessionID = null
 
@@ -77,8 +86,32 @@ export default class DataCollections extends React.Component {
     })
   }
 
+  updateSessionResults = () => {
+    // if the session has just ended
+
+    axios.post(`${domainName}/guess-sessions/recent-results`,{user_id: this.props.user_id})
+    .then((res)=>{
+      let correctGuesses = res.data.correct;
+      let incorrectGuesses = res.data.incorrect;
+      let collectionName = res.data.collectionName;
+
+      if(this.state.firstLoad && correctGuesses && incorrectGuesses && collectionName){
+        this.setState({
+          metrics: {
+            collectionName: collectionName,
+            bestRecall: '',
+            averageRecall: `Recently Guessed ${correctGuesses} of ${correctGuesses + incorrectGuesses} Correctly.`,
+            worstRecall: ``
+          },
+          firstLoad: false
+        })
+      }
+    })
+
+  }
+
   getMetrics = (index,collection_id) => {
-    axios.post(`http://localhost:5000/datacollections/metrics/${collection_id}`,{user_id: this.props.user_id})
+    axios.post(`${domainName}/datacollections/metrics/${collection_id}`,{user_id: this.props.user_id})
     .then((res)=>{
 
       this.setState({
@@ -98,12 +131,20 @@ export default class DataCollections extends React.Component {
         }),
         metrics: {
           collectionName: this.state.collections.filter((collection)=>collection.index === index)[0].collectionName,
-          bestRecall: (res.data.worstRecall.averageRecall > res.data.bestRecall.averageRecall) ? 'No data available' : `Best Recall : ${res.data.bestRecall.memoryText} ${res.data.bestRecall.averageRecall}%`,
-          averageRecall: (res.data.worstRecall.averageRecall > res.data.bestRecall.averageRecall) ? '' : `Average Recall : ${res.data.averageRecall}%`,
+          bestRecall: (res.data.worstRecall.averageRecall > res.data.bestRecall.averageRecall) ? '' : `Best Recall : ${res.data.bestRecall.memoryText} ${res.data.bestRecall.averageRecall}%`,
+          averageRecall: (res.data.worstRecall.averageRecall > res.data.bestRecall.averageRecall) ? 'No data available' : `Average Recall : ${res.data.averageRecall}%`,
           worstRecall: (res.data.worstRecall.averageRecall > res.data.bestRecall.averageRecall) ? '' : `Worst Recall : ${res.data.worstRecall.memoryText} ${res.data.worstRecall.averageRecall}%`
         }
       })
     }).catch(err=>console.log(`${err}`))
+    this.setState({
+      metrics: {
+        collectionName: '',
+        worstRecall: '',
+        averageRecall: 'Loading...',
+        bestRecall: ''
+      }
+    })
   }
 
   render(){
@@ -111,36 +152,34 @@ export default class DataCollections extends React.Component {
       <div>
         {this.renderRedirect()}
         {this.renderRedirectToPractice()}
+        {this.updateSessionResults()}
         <div className="metrics-display">
           <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall recall-title">{(this.state.metrics.collectionName) ? (this.state.metrics.collectionName.toUpperCase()) : ('')}</div>
-          <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall">{(this.state.metrics.averageRecall)}</div>
-          <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.bestRecall}</div>
-          <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.worstRecall}</div>
+          <div style={(this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">{(this.state.metrics.averageRecall)}</div>
+          <div style={(this.state.metrics.bestRecall) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.bestRecall}</div>
+          <div style={(this.state.metrics.worstRecall) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.worstRecall}</div>
         </div>
         {this.state.collections.length === 0 && !this.state.loading  ? <div className="make-collection-link-container"><Link className="make-collection-link" to='/React-Recall/data_collections/new'> Make a collection! </Link></div> : ''}
-        {this.state.collections.map((collection,index)=>
-        <div key={`collection${index}`} className={`data-collection ${(collection.highlighted) ? ('highlighted-collection') : ('')}`} >
-          <div className="data-collection-name">{collection.collectionName}</div>
+        <div className="collections-wrapper">
+          {this.state.collections.map((collection,index)=>
+          <div key={`collection${index}`} className={`data-collection ${(collection.highlighted) ? ('highlighted-collection') : ('')}`} >
+            <div className="data-collection-name">
+              <div>{collection.collectionName}</div>
+              <i class="fas fa-chevron-down"></i>
+            </div>
 
-          <div onClick={()=>this.getMetrics(index,collection.collection_id)} className={`data-collection-metrics`}>
-            Metrics
-            {/* <div className="recall-data">
-              <div>Worst Recall:</div>
-              <div>{`${this.findWorstMemoryTextOfCollection(collection.collection_id)}: ${this.findWorstRecallOfCollection(collection.collection_id)}%`}</div>
-            </div> */}
-            {/* <div className="recall-data">
-              <div>Best Recall:</div>
-              <div></div>
-            </div> */}
-            {/* <div className="recall-data">
-              <div>Average Recall:</div>
-              <div></div>
-            </div> */}
+            <div onClick={()=>this.getMetrics(index,collection.collection_id)} className={`data-collection-metrics`}>
+              <div>Metrics</div>
+              <i className="fas fa-chart-line"></i>
+            </div>
+            
+            <div onClick={()=>this.beginGuessSession(collection.collection_id)} className="practice">
+              <div>Practice</div>
+              <i className="fas fa-dumbbell"></i>
+            </div>
           </div>
-          
-          <div onClick={()=>this.beginGuessSession(collection.collection_id)} className="practice">Practice</div>
+          )}
         </div>
-        )}
       </div>
     )
   }

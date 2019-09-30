@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom'
 import "./navbar.component.scss"
 import axios from 'axios'
 
+let domainName = 'https://react-recall-be.herokuapp.com'
+
 export default class Navbar extends React.Component {
 
+
   logout = (e) => {
-    // e.preventDefault()
-    axios.post('http://localhost:5000/logout').then(()=>{
-      this.props.updateUserID(undefined)
-      // window.location = '/login'
+    axios.post(`${domainName}/logout`).then(()=>{
+      this.props.updateUserID(undefined,'')
     })
   }
 
@@ -21,7 +22,7 @@ export default class Navbar extends React.Component {
             <Link to="/React-Recall/data_collections/me" className="navbar-brand">React. Recall.</Link>
             <Link to="/React-Recall/data_collections/new" className="navbar-link">New Collection</Link>
             <Link to="/React-Recall/data_collections/me"  className="navbar-link">My Collections</Link>
-            <button onClick={this.logout} className="logout-button">Logout</button>
+            <button onClick={this.logout} className="logout-button">Logout <span>{this.props.username}</span></button>
           </div>)
           : ''}
       </nav>

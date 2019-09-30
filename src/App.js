@@ -77,12 +77,17 @@ let dataset1 =  {
 class App extends React.Component {
 
   state = {
-    user_id: undefined
+    user_id: undefined,
+    username: ''
   }
 
-  updateUserID = (newID) => {
+  updateUserID = (newID,newUsername) => {
+    if(!newUsername){
+      newUsername = ''
+    }
     this.setState({
-      user_id: newID
+      user_id: newID,
+      username: newUsername
     })
   }
 
@@ -102,13 +107,12 @@ class App extends React.Component {
             backgroundColor: '#D1E8E2'
           }}
         >
-        <Navbar user_id={this.state.user_id} updateUserID={this.updateUserID}/>
+        <Navbar user_id={this.state.user_id} updateUserID={this.updateUserID} username={this.state.username}/>
         <Route path="/React-Recall/login" exact component={()=><LoginRegisterForm user_id={this.state.user_id} updateUserID={this.updateUserID}/>} />
-          <Route path="/React-Recall/data_collections/me" exact component={() => <DataCollections user_id={this.state.user_id} updateUserID={this.updateUserID}/>} />
+          <Route path="/React-Recall/data_collections/me" exact component={() => <DataCollections user_id={this.state.user_id} />} />
           <Route path="/React-Recall/data_collections/new" exact component={()=><NewCollectionForm user_id={this.state.user_id} />} />
-  
           <Route path="/React-Recall/practice/:collection_id/:session_id" component={
-            ({match})=><DatasetContainer match = {match} user_id={this.state.user_id} updateUserID={this.updateUserID} diameter={140} data={dataset1} parentWidth={100} parentHeight={100} parentWidthUnit={'vw'} parentHeightUnit={'vh'}/>
+            ({match})=><DatasetContainer match={match} user_id={this.state.user_id} diameter={140} data={dataset1} parentWidth={100} parentHeight={100} parentWidthUnit={'vw'} parentHeightUnit={'vh'}/>
           }/>
   
         </div>
