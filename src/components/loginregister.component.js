@@ -88,7 +88,7 @@ export default class LoginRegister extends React.Component {
 
 
             if(res.data.authenticated){
-              
+              this.props.updateUserID(res.data.user_id,res.data.username)
             } else {
               this.setState({
                 loginErrorMessage: res.data.msg,

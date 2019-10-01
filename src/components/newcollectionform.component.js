@@ -74,7 +74,7 @@ export default class NewCollectionForm extends React.Component {
         this.setState({
           collectionID: res.data.collection_id
         })
-      })
+      }).catch(err=>console.log(err))
   }
 
   render(){

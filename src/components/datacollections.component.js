@@ -50,7 +50,7 @@ export default class DataCollections extends React.Component {
   }
   renderRedirectToPractice = () => {
     if(this.state.redirectURL.collectionID !== undefined){
-      return <Redirect to={`/React-Recall/practice/${this.state.redirectURL.collectionID}/${(this.state.redirectURL.sessionID) ? (this.state.redirectURL.sessionID) : ('new')}`}/>
+      return <Redirect to={`/React-Recall/practice/${this.state.redirectURL.collectionID}/${(this.state.redirectURL.sessionID !== undefined && this.state.redirectURL.sessionID !== null) ? (this.state.redirectURL.sessionID) : ('new')}`}/>
     }
   }
 
@@ -171,15 +171,11 @@ export default class DataCollections extends React.Component {
     } else {
       axios.post(`${domainName}/datacollections/${collection_id}/datapoints`,{user_id: this.props.user_id})
       .then((res)=>{
-        console.log(res.data)
         this.setState({
           expandedCollection: {
             key,
             data: res.data.dataPoints.map(dataPoint=>dataPoint.imageUrl),
             width: document.querySelector(`[index="${key}"]`).offsetWidth
-
-
-            // FROM HERE
           }
         })
       })
@@ -224,7 +220,7 @@ export default class DataCollections extends React.Component {
         <div className="collections-wrapper">
           {this.state.collections.map((collection,index)=>
           <div className='vertical-flex-container' key={`collection-wrapper${index}`}>
-            <div key={`collection${index}`} index={`collection${index}`} className={`data-collection ${(collection.highlighted) ? ('highlighted-collection') : ('')}`}>
+            <div key={`collection${index}`} index={`collection${index}`} className={`data-collection ${(collection.collection_id === this.state.metrics.collection_id) ? ('highlighted-collection') : ('')}`}>
               <div
                 className="data-collection-name"
                 onClick={() => this.expandCollection(`collection${index}`,collection.collection_id)}
