@@ -76,13 +76,11 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Chris Hurt - chrishcoding@gmail.com
 
-Project Link: [https://github.com/ChrisHurt/React-Recall-Remember](https://github.com/ChrisHurt/React-Recall-Remember)
-
 ## Live Demo
 ### Demo User
  - username: Carla
  - password: 123
- - Link: [https://chrishurt.github.io/React-Recall/](https://chrishurt.github.io/React-Recall/)
+ - Link: [https://github.com/ChrisHurt/React-Recall---Client-side](https://github.com/ChrisHurt/React-Recall---Client-side)
 
 
 <!-- ACKNOWLEDGEMENTS -->
