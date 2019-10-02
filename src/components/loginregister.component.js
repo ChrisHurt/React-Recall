@@ -85,10 +85,9 @@ export default class LoginRegister extends React.Component {
           console.log('Successful user addition, logging in...')
           const loginData = { username: newUser.username, password: newUser.password }
           axios.post(`${domainName}/login`,loginData).then(res => {
-
-
             if(res.data.authenticated){
               this.props.updateUserID(res.data.user_id,res.data.username)
+              $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
             } else {
               this.setState({
                 loginErrorMessage: res.data.msg,
