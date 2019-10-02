@@ -1,4 +1,4 @@
-# React Recall Remember - Client-side
+# React Recall - Client-side
 
 ## Table of Contents
 
