@@ -1,4 +1,4 @@
-# React Recall Remember
+# React Recall Remember - Client-side
 
 ## Table of Contents
 
@@ -22,9 +22,9 @@ What is this useful for?
 * [React](https://reactjs.org/)
 * [SASS](https://sass-lang.com/)
 * [Jest](https://jestjs.io/)
-* [MongoDB](https://www.mongodb.com/) -- Integration Pending
-* [Express](https://expressjs.com/) -- Integration Pending
-* [Node](https://nodejs.org/en/) -- Integration Pending
+* [MongoDB](https://www.mongodb.com/)
+* [Express](https://expressjs.com/)
+* [Node](https://nodejs.org/en/)
 
 ## Roadmap
 ### Sprint 1 -- Completed 11/09/19
@@ -49,46 +49,23 @@ Store memory outcomes in a new component
   - Hardcode more data for testing - 50 unique data points
   - Success in one, Failure in another
 
-### Sprint 4 -- In Progress
-Server-side data management
-  - Design PSQL Schema
-    - Tables
-      - Users
-      - Data Points
-      - Data Collections
-  - Build Sinatra Backend
-    - Models representing users, datapoints & collections
-    - CRUD API Endpoints
-    - User Login & Validation
-  - Implement Schema in PSQL
-    - Write Schema File
-    - Write Seed & Cleanse files
-
-
-### Schema Design
-The initial schema design contains 5 tables
-- **Users**
-  - have many *DataCollections* 
-  - have many *GuessSessions*
-- **DataCollections**
-  - belong to a *User* (May need another table for sharing data collections between users)
-  - have many *DataPoints*
-- **GuessSessions**
-  - belong to a *User*
-  - belong to a *DataCollection*
-  - have many *Guesses*
-- **DataPoints**
-  - belong to a *DataCollection*
-  
+### Sprint 4 -- Redesigned & Completed 02/10/19
+Build UI/Components and react routing for
+ - Navigation
+ - Login and Register
+ - Viewing datacollections
+  - Viewing data in a collection
+  - Viewing metrics of a collection
+  - Viewing recent session outcomes
+ - Making a datacollection
+ - General feedback on user actions for clarity
+  - I.e. You have added 'item' to 'collection'
 
 ### Future Implementation
 Look into methods for collecting data to integrate into the UI for testing
   - Consider:
-    - Facebook & Instagram API's - Rejected, not enough time to implement
-    - LinkedIn API - Pending Decision
-    - Any other API's or accessible data that can be applied in this context - No suitable options found, Pending Decision
-  - Look into methods for allowing user input and storage of this data as appropriate and if needed
-    - Postgresql with node or ruby backend - Under consideration
+    - Facebook & Instagram API's
+    - LinkedIn API
 
 ## License
 
@@ -101,8 +78,11 @@ Chris Hurt - chrishcoding@gmail.com
 
 Project Link: [https://github.com/ChrisHurt/React-Recall-Remember](https://github.com/ChrisHurt/React-Recall-Remember)
 
-Live Demo: -- Pending implementation of backend
-
+## Live Demo
+### Demo User
+ - username: Carla
+ - password: 123
+ - Link: [https://chrishurt.github.io/React-Recall/](https://chrishurt.github.io/React-Recall/)
 
 
 <!-- ACKNOWLEDGEMENTS -->
