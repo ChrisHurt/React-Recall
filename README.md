@@ -4,6 +4,7 @@
 
 * [About the Project](#about-the-project)
   * [Built With](#built-with)
+* [Demo](#demo)
 * [Roadmap](#roadmap)
 * [License](#license)
 * [Contact](#contact)
@@ -25,6 +26,12 @@ What is this useful for?
 * [MongoDB](https://www.mongodb.com/)
 * [Express](https://expressjs.com/)
 * [Node](https://nodejs.org/en/)
+
+## Live Demo
+### Demo User
+ - username: Carla
+ - password: 123
+ - Link: [https://chrishurt.github.io/React-Recall/](https://chrishurt.github.io/React-Recall/)
 
 ## Roadmap
 ### Sprint 1 -- Completed 11/09/19
@@ -75,13 +82,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 
 Chris Hurt - chrishcoding@gmail.com
-
-## Live Demo
-### Demo User
- - username: Carla
- - password: 123
- - Link: [https://chrishurt.github.io/React-Recall/](https://chrishurt.github.io/React-Recall/)
-
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements

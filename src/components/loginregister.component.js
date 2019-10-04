@@ -90,7 +90,7 @@ export default class LoginRegister extends React.Component {
               $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
             } else {
               this.setState({
-                loginErrorMessage: res.data.msg,
+                loginErrorMessage: 'Registration Error: Invalid username or email',
                 registerErrorMessage: null
               })
             }
@@ -105,7 +105,7 @@ export default class LoginRegister extends React.Component {
       })
       .catch(err => {
         this.setState({
-          registerErrorMessage: 'Invalid username, email or password',
+          registerErrorMessage: `Registration Error: Invalid username or email`,
           loginErrorMessage: null
         })
       })

@@ -10,6 +10,14 @@ let domainName = 'https://react-recall-be.herokuapp.com'
 
 var tierSizes = [8,15,22]
 
+let seedData = (numDataPoints) => {
+  let seed = {}
+  for(let i = 0; i < numDataPoints; i++){
+    seed[i] = i;
+  }
+  return seed
+}
+
 export default class DatasetContainer extends React.Component {
 
   constructor(props){
@@ -148,9 +156,19 @@ export default class DatasetContainer extends React.Component {
               id={person[0]}
               zIndex={(tierIndex!==1) ? (tierIndex) : 5}
               parentDiameter={diameter}
-              diameter={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}
+
+              diameter={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
+                (2*this.state.circleTiers[0]['outerDiameter']) :
+                // (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}
+                (fixedDiameter!==undefined && fixedDiameter!==null ? fixedDiameter : CircleCalculations.calculateSubCircleDiameter(diameter,data))}
+                
               rotationAngle={CircleCalculations.calculateSubCircleRotationAngle(index,data)}
-              radialDisplacement={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? 0 : (CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) || CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
+
+              radialDisplacement={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
+                 0 :
+                //  (CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) || CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
+                (fixedDiameter!==undefined && fixedDiameter!==null ? CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) : CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
+
               text={person[1].memoryText}
               image_url={person[1].imageURL}
               transformOffset={transformOffset}
@@ -166,7 +184,9 @@ export default class DatasetContainer extends React.Component {
               removeDataByKey={this.removeDataByKey}
               incrementSuccess={this.incrementSuccess}
               incrementFailure={this.incrementFailure}
-              backgroundSize={`${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px ${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px,cover`}
+              backgroundSize={`${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
+                (2*this.state.circleTiers[0]['outerDiameter']) :
+                (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px ${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px,cover`}
             />          
           })}
       </div>
@@ -323,7 +343,9 @@ export default class DatasetContainer extends React.Component {
                 circleTier.outerDiameter,
                 circleTier.data,
                 largestDiameter - circleTier.outerDiameter,
-                (Object.keys(circleTier.data).length !== tierSizes[index] && index!==0) ? (subCircleDiameter) : (null),
+                (Object.keys(circleTier.data).length !== tierSizes[index] && index!==0) ?
+                  (CircleCalculations.calculateSubCircleDiameter(circleTier.outerDiameter,seedData(tierSizes[index]))) :
+                  (null),
                 index,
                 this.state.axiosInDataPointsAllowed
               )
