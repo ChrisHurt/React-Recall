@@ -27,7 +27,7 @@ What is this useful for?
 * [Express](https://expressjs.com/)
 * [Node](https://nodejs.org/en/)
 
-## Live Demo
+## Demo
 ### Demo User
  - username: Carla
  - password: 123
