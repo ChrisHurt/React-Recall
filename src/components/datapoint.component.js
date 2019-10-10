@@ -1,6 +1,5 @@
 import React from 'react'
 import './DataPoint.scss'
-import axios from 'axios'
 
 
 export default class DataPoint extends React.Component {
