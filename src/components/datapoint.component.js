@@ -1,5 +1,5 @@
 import React from 'react'
-import './DataPoint.scss'
+import './datapoint.component.scss'
 
 
 export default class DataPoint extends React.Component {

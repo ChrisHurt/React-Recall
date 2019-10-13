@@ -1,5 +1,5 @@
 import React from 'react'
-import './DatasetContainer.scss'
+import './datasetcontainer.component.scss'
 import DataPoint from './datapoint.component'
 import CircleMemoryOutcomes from './circlememoryoutcomes.component'
 import CircleCalculations from '../javascripts/circleCalculations'
