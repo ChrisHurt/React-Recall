@@ -65,7 +65,7 @@ export default class DatasetContainer extends React.Component {
     )
   }
 
-  recordGuess = (remembered,datapoint_id,key) => {
+  recordGuess = (remembered,datapoint_id) => {
     if(this.state.axiosInDataPointsAllowed){
       axios.post(`${domainName}/guess-sessions/${this.state.session_id}/${datapoint_id}/add`,{user_id: this.props.user_id, remembered})
         .then(res=>{
