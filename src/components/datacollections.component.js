@@ -55,18 +55,11 @@ export default class DataCollections extends React.Component {
   }
 
   beginGuessSession = (collection_id) => {
-    // TODO
-    // Make Axios Request here
     axios.post(`${domainName}/guess-sessions/data-collection/${collection_id}`,{user_id: this.props.user_id}).then((res)=>{
-    
-    let sessionID = null
-
-    
+      let sessionID = null
       if(res.data.guessSession !== undefined && res.data.guessSession !== false){
-        // set the session ID
         sessionID = res.data.guessSession._id
       }
-
       this.setState({
         redirectURL: {
           collectionID: collection_id,
@@ -103,12 +96,6 @@ export default class DataCollections extends React.Component {
   }
 
   getMetrics = (index,collection_id) => {
-    console.log('collection_id')
-    console.log(collection_id)
-    console.log()
-    console.log('this.state.metrics.collection_id')
-    console.log(this.state.metrics.collection_id)
-    console.log()
     if(collection_id === this.state.metrics.collection_id){
       this.setState({
         metrics: {
@@ -122,15 +109,12 @@ export default class DataCollections extends React.Component {
     } else {
       axios.post(`${domainName}/datacollections/metrics/${collection_id}`,{user_id: this.props.user_id})
       .then((res)=>{
-  
         this.setState({
           collections: this.state.collections.map(collection=>{
-    
             let isHighlighted = false
             if(collection.index === index){
               isHighlighted = true
             }
-    
             return {
               collectionName: collection.collectionName,
               collection_id: collection.collection_id,
@@ -211,12 +195,24 @@ export default class DataCollections extends React.Component {
         {this.renderRedirectToPractice()}
         {this.updateSessionResults()}
         <div className="metrics-display">
-          <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall recall-title">{(this.state.metrics.collectionName) ? (this.state.metrics.collectionName.toUpperCase()) : ('')}</div>
-          <div style={(this.state.metrics.collectionName && this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">{(this.state.metrics.averageRecall)}</div>
-          <div style={(this.state.metrics.collectionName && this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.bestRecall}</div>
-          <div style={(this.state.metrics.collectionName && this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">{this.state.metrics.worstRecall}</div>
+          <div style={(this.state.metrics.collectionName) ? ({}): ({padding: 0})} className="recall recall-title">
+            {(this.state.metrics.collectionName) ? (this.state.metrics.collectionName.toUpperCase()) : ('')}
+          </div>
+          <div style={(this.state.metrics.collectionName && this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">
+            {(this.state.metrics.averageRecall)}
+          </div>
+          <div style={(this.state.metrics.collectionName && this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">
+            {this.state.metrics.bestRecall}
+          </div>
+          <div style={(this.state.metrics.collectionName && this.state.metrics.averageRecall) ? ({}): ({padding: 0})} className="recall">
+            {this.state.metrics.worstRecall}
+          </div>
         </div>
-        {this.state.collections.length === 0 && !this.state.loading  ? <div className="make-collection-link-container"><Link className="make-collection-link" to='/React-Recall/data_collections/new'> Make a collection! </Link></div> : ''}
+        {
+          (this.state.collections.length === 0 && !this.state.loading) ?
+          <div className="make-collection-link-container"><Link className="make-collection-link" to='/React-Recall/data_collections/new'> Make a collection! </Link></div> :
+          ''
+        }
         <div className="collections-wrapper">
           {this.state.collections.map((collection,index)=>
           <div className='vertical-flex-container' key={`collection-wrapper${index}`}>
