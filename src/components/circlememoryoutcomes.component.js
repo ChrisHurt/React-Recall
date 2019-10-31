@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import './circlememoryoutcomes.component.scss';
 
 export default class CircleMemoryOutcomes extends React.Component {
   state = {}
@@ -11,15 +12,7 @@ export default class CircleMemoryOutcomes extends React.Component {
 
 
     return (
-      <div style = {{
-        paddingLeft: '1em',
-        paddingRight: '1em',
-        padding: '0.5em',
-        display: 'flex',
-        justifyContent: 'space-between',
-        backgroundColor: '#2C3531',
-        color: '#D1E8E2'
-      }}>
+      <div className="outcomes-bar">
         <div>Correct Guesses: {successes}</div>
         <div>Incorrect Guesses: {failures}</div>
       </div>
