@@ -1,8 +1,35 @@
 .datapoint{
   position: relative;
   border-radius: 50%;
+  transition: transform 0.35s ease-in, width 0.35s ease-in, height 0.35s ease-in;
+  color: #2C3531;
+  font-weight: 700;
+  text-shadow: 1px 1px #D1E8E2;
+  text-align: center;
+  font-size: 1.5em;
+  text-wrap: wrap;
 }
 .datapoint-rotation-container{
   position: relative;
   background-color: rgba(0,255,0,1);
+  transform-origin: left center;
+  height: 0;
 }
+.not-selectable{
+  user-select: none;
+}
+.background-color-light-orange{
+  background-color: rgba(255,203,154,0.65);
+}
+.datapoint-button-remembered,.datapoint-button-forgot{
+  padding: 0.25em;
+  border-radius: 0.5em;
+}
+.datapoint-button-remembered{
+  background-color: #FFCB9A;
+  margin-right: 0.5em;
+}
+.datapoint-button-forgot{
+  background-color: #D9B08C;
+}
+
