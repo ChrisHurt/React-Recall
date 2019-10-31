@@ -7,7 +7,6 @@ import { Redirect } from 'react-router-dom'
 import axios from 'axios'
 let domainName = 'https://react-recall-be.herokuapp.com'
 
-
 var tierSizes = [8,15,22]
 
 let seedData = (numDataPoints) => {
@@ -42,7 +41,7 @@ export default class DatasetContainer extends React.Component {
     }
   }
 
-  renderContainerCircle = (diameter,backgroundColor,transformOffset,zIndex) => {
+  renderContainerCircle = (diameter,transformOffset,zIndex) => {
     return(
       <div style = {{
         height: 0,
@@ -51,10 +50,8 @@ export default class DatasetContainer extends React.Component {
         <div 
           className="DS-container"
           style={{
-            position: "relative",
             width: 2*diameter,
             height: 2*diameter,
-            backgroundColor,
             zIndex: (zIndex || '0'),
             top: `calc(${this.state.parentHeight/2}${this.state.parentHeightUnit} - ${this.state.largestDiameter - transformOffset}px)`,
             left: `calc(${this.state.parentWidth/2}${this.state.parentWidthUnit} - ${this.state.largestDiameter - transformOffset}px)`
@@ -67,40 +64,24 @@ export default class DatasetContainer extends React.Component {
 
   recordGuess = (remembered,datapoint_id) => {
     if(this.state.axiosInDataPointsAllowed){
-      axios.post(`${domainName}/guess-sessions/${this.state.session_id}/${datapoint_id}/add`,{user_id: this.props.user_id, remembered})
-        .then(res=>{
-          console.log()
-          console.log('Guess Test Underway')
-          console.log(res.data)
-          console.log()
-        })
+      axios.post(`${domainName}/guess-sessions/${this.state.session_id}/${datapoint_id}/add`,{user_id: this.props.user_id, remembered});
     }
   }
 
 
   removeDataByKey = (key,remembered) => {
-    console.log(`key: ${key}`)
     let newDataArray = Object.entries(this.state.data)
 
     let newDataObject = newDataArray.reduce((newDataObj,keyValPair,index)=>{
       if(keyValPair[0]!==key){
         newDataObj[keyValPair[0]] = keyValPair[1]
-      } else {
-        console.log(`keyValPair[0]: ${keyValPair[0]}`)
-        console.log(`keyValPair[1]: ${keyValPair[1]}`)
       }
       return newDataObj
     },{})
 
     let datapoint_id = key
 
-    axios.post(`${domainName}/guess-sessions/${this.state.session_id}/${datapoint_id}/add`,{user_id: this.props.user_id, remembered})
-      .then(res=>{
-        console.log()
-        console.log('Guess Test Underway')
-        console.log(res.data)
-        console.log()
-      })
+    axios.post(`${domainName}/guess-sessions/${this.state.session_id}/${datapoint_id}/add`,{user_id: this.props.user_id, remembered});
 
     this.setState({
       data: newDataObject,
@@ -113,13 +94,11 @@ export default class DatasetContainer extends React.Component {
   }
 
   incrementSuccess = () => {
-    // this.props.updateRecentSession('Collection Name',this.state.successes + 1,this.state.failures)
     this.setState({
       successes: this.state.successes + 1
     })
   }
   incrementFailure = () => {
-    // this.props.updateRecentSession('Collection Name',this.state.successes,this.state.failures + 1)
     this.setState({
       failures: this.state.failures + 1
     })
@@ -159,14 +138,12 @@ export default class DatasetContainer extends React.Component {
 
               diameter={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
                 (2*this.state.circleTiers[0]['outerDiameter']) :
-                // (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}
                 (fixedDiameter!==undefined && fixedDiameter!==null ? fixedDiameter : CircleCalculations.calculateSubCircleDiameter(diameter,data))}
                 
               rotationAngle={CircleCalculations.calculateSubCircleRotationAngle(index,data)}
 
               radialDisplacement={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
                  0 :
-                //  (CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) || CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
                 (fixedDiameter!==undefined && fixedDiameter!==null ? CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) : CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
 
               text={person[1].memoryText}
@@ -204,26 +181,17 @@ export default class DatasetContainer extends React.Component {
         // Make axios call to validate session id
         axios.post(`${domainName}/guess-sessions/${session_id}/isvalid`,{user_id: this.props.user_id}).then(res=>{
           if(res.data.guessSessionIsValid){
-            console.log('valid')
 
             // Make axios call to find guesses
             axios.post(`${domainName}/guess-sessions/${session_id}/guesses`,{user_id: this.props.user_id}).then(res=>{
               
               let dataPointIDsGuessed = res.data.guesses.map(guess=>guess.dataPoint)
 
-              console.log()
-              console.log('All data points')
-              console.log(newDataArray)
-              console.log()
-              console.log('Guessed Data Points')
-              console.log(dataPointIDsGuessed)
-
               const checkIfAlreadyGuessed = (dp) => {
                 let flagToKeep = true
                 dataPointIDsGuessed.forEach((dataPointIDGuessed)=> {
                   if(dp._id === dataPointIDGuessed){
-                    console.log(`Element '${dataPointIDGuessed}' removed!`)
-                    flagToKeep = false
+                    flagToKeep = false;
                   }
                 })
                 return flagToKeep
@@ -242,11 +210,6 @@ export default class DatasetContainer extends React.Component {
                 return dataObject
               },{})
 
-              console.log()
-              console.log('filteredDataObject')
-              console.log(filteredDataObject)
-              console.log()
-            
               // setstate to render data
               this.setState({
                 data: filteredDataObject,
@@ -260,7 +223,6 @@ export default class DatasetContainer extends React.Component {
             })
 
           } else {
-            console.log('invalid')
             // Make Axios call to post a new session
             axios.post(`${domainName}/guess-sessions/${collection_id}/add`,{user_id: this.props.user_id}).then(res=>{
 
@@ -275,11 +237,6 @@ export default class DatasetContainer extends React.Component {
                 return dataObject
               },{})
 
-              console.log()
-              console.log('newDataObject')
-              console.log(newDataObject)
-              console.log()
-              
               // setstate to render data
               this.setState({
                 data: newDataObject,
@@ -315,7 +272,6 @@ export default class DatasetContainer extends React.Component {
 
   render(){
     const {
-      subCircleDiameter,
       circleTiers,
       largestDiameter,
       successes,
@@ -354,7 +310,6 @@ export default class DatasetContainer extends React.Component {
             {
               this.renderContainerCircle(
                 circleTier.outerDiameter,
-                '#116466',
                 (
                   largestDiameter - circleTier.outerDiameter
                 )
