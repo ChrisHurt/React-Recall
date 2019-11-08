@@ -12,28 +12,36 @@ export default class DataPoint extends React.Component {
   render(){
     
     const {
+      /* Data Hierarchy ~ START */
       index,
       tierIndex,
+      /* Data Hierarchy ~ END */
+      /* Layout & Geometry ~ START */
       parentDiameter,
       diameter,
       radialDisplacement,
       rotationAngle,
       transformOffset,
-      text,
-      image_url,
       top,
       left,
+      backgroundSize,
+      zIndex,
+      /* Layout & Geometry ~ END */
+      /* Datapoint content ~ START */
+      text,
+      image_url,
+      /* Datapoint content ~ END */
+      /* Control Flow Booleans ~ START */
       transitionAllowed,
+      /* Control Flow Booleans ~ END */
+      /* Functions ~ START */
       allowTransitions,
       preventTransitions,
       centerTransition,
       removeDataByKey,
-      backgroundSize,
-      zIndex,
       incrementSuccess,
-      incrementFailure,
-      recordGuess
-      
+      incrementFailure
+      /* Functions ~ END */
     } = this.props
     
     return (

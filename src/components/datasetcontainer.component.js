@@ -121,41 +121,49 @@ export default class DatasetContainer extends React.Component {
         {Object.entries(data).map((person,index)=>{
             return <DataPoint
 
+              /* Data Associated with recording guesses ~ START */
               recordGuess = {this.recordGuess}
               axiosInDataPointsAllowed = {axiosInDataPointsAllowed}
-              key={`dp-${index}`}
-              id={person[0]}
-              zIndex={(tierIndex!==1) ? (tierIndex) : 5}
-              parentDiameter={diameter}
+              id={person[0]} 
+              /* Data Associated with recording guesses ~ END */
 
+              key={`dp-${index}`}
+              /* Data Hierarchy ~ START */
+              index={index}
+              tierIndex={tierIndex}
+              /* Data Hierarchy ~ END */
+              /* Layout & Geometry ~ START */
+              parentDiameter={diameter}
               diameter={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
                 (2*this.state.circleTiers[0]['outerDiameter']) :
                 (fixedDiameter!==undefined && fixedDiameter!==null ? fixedDiameter : CircleCalculations.calculateSubCircleDiameter(diameter,Object.keys(data).length))}
-                
-              rotationAngle={CircleCalculations.calculateSubCircleRotationAngle(index,Object.keys(data).length)}
-
               radialDisplacement={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
-                 0 :
+                  0 :
                 (fixedDiameter!==undefined && fixedDiameter!==null ? CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) : CircleCalculations.calculateSubCircleRadialDisplacement(diameter,Object.keys(data).length))}
-
-              text={person[1].memoryText}
-              image_url={person[1].imageURL}
+              rotationAngle={CircleCalculations.calculateSubCircleRotationAngle(index,Object.keys(data).length)}
               transformOffset={transformOffset}
               top={`calc(${this.state.parentHeight/2}${this.state.parentHeightUnit} - ${this.state.largestDiameter}px)`}
               left={`calc(${this.state.parentWidth/2}${this.state.parentWidthUnit} - ${this.state.largestDiameter}px)`}
-              transitionAllowed={this.state.transitionsAllowed}
-              index={index}
-              tierIndex={tierIndex}
-              centred={(this.selectedCircleIndex === index && this.selectedCircleTierIndex === tierIndex)}
-              centerTransition={this.centerTransition}
-              preventTransitions={this.preventTransitions}
-              allowTransitions={this.allowTransitions}
-              removeDataByKey={this.removeDataByKey}
-              incrementSuccess={this.incrementSuccess}
-              incrementFailure={this.incrementFailure}
               backgroundSize={`${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
                 (2*this.state.circleTiers[0]['outerDiameter']) :
                 (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,Object.keys(data).length))}px ${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,Object.keys(data).length))}px,cover`}
+              zIndex={(tierIndex!==1) ? (tierIndex) : 5}
+              /* Layout & Geometry ~ END */
+              /* Datapoint content ~ START */
+              text={person[1].memoryText}
+              image_url={person[1].imageURL}
+              /* Datapoint content ~ END */
+              /* Control Flow Booleans ~ START */
+              transitionAllowed={this.state.transitionsAllowed}
+              /* Control Flow Booleans ~ END */
+              /* Functions ~ START */
+              allowTransitions={this.allowTransitions}
+              preventTransitions={this.preventTransitions}
+              centerTransition={this.centerTransition}
+              removeDataByKey={this.removeDataByKey}
+              incrementSuccess={this.incrementSuccess}
+              incrementFailure={this.incrementFailure}
+              /* Functions ~ END */
             />          
           })}
       </div>
@@ -220,7 +228,6 @@ export default class DatasetContainer extends React.Component {
 
               session_id = res.data.session_id
 
-              console.log('New Session Added')
               let newDataObject = newDataArray.reduce((dataObject,currentDataPoint)=>{
                 dataObject[currentDataPoint._id] = {
                   imageURL: currentDataPoint.imageUrl,
