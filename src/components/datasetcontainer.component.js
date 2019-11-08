@@ -7,15 +7,7 @@ import { Redirect } from 'react-router-dom'
 import axios from 'axios'
 let domainName = 'https://react-recall-be.herokuapp.com'
 
-var tierSizes = [8,15,22]
-
-let seedData = (numDataPoints) => {
-  let seed = {}
-  for(let i = 0; i < numDataPoints; i++){
-    seed[i] = i;
-  }
-  return seed
-}
+var tierSizes = [8,15,22];
 
 export default class DatasetContainer extends React.Component {
 
@@ -23,7 +15,7 @@ export default class DatasetContainer extends React.Component {
     super(props);
     this.state = {
       diameter: this.props.diameter,
-      subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,(CircleCalculations.circleTiers(this.props.data,this.props.diameter)[0]['data'])),
+      subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,(this.props.data > tierSizes[0]) ? tierSizes[0] : this.props.data.length),
       data: this.props.data,
       circleTiers: CircleCalculations.circleTiers(this.props.data,this.props.diameter),
       largestDiameter: CircleCalculations.largestDiameter(this.props.data,this.props.diameter),
@@ -138,13 +130,13 @@ export default class DatasetContainer extends React.Component {
 
               diameter={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
                 (2*this.state.circleTiers[0]['outerDiameter']) :
-                (fixedDiameter!==undefined && fixedDiameter!==null ? fixedDiameter : CircleCalculations.calculateSubCircleDiameter(diameter,data))}
+                (fixedDiameter!==undefined && fixedDiameter!==null ? fixedDiameter : CircleCalculations.calculateSubCircleDiameter(diameter,Object.keys(data).length))}
                 
-              rotationAngle={CircleCalculations.calculateSubCircleRotationAngle(index,data)}
+              rotationAngle={CircleCalculations.calculateSubCircleRotationAngle(index,Object.keys(data).length)}
 
               radialDisplacement={(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
                  0 :
-                (fixedDiameter!==undefined && fixedDiameter!==null ? CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) : CircleCalculations.calculateSubCircleRadialDisplacement(diameter,data))}
+                (fixedDiameter!==undefined && fixedDiameter!==null ? CircleCalculations.calculateNewRadialDisplacement(fixedDiameter/2,tierSizes[tierIndex]) : CircleCalculations.calculateSubCircleRadialDisplacement(diameter,Object.keys(data).length))}
 
               text={person[1].memoryText}
               image_url={person[1].imageURL}
@@ -163,7 +155,7 @@ export default class DatasetContainer extends React.Component {
               incrementFailure={this.incrementFailure}
               backgroundSize={`${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ?
                 (2*this.state.circleTiers[0]['outerDiameter']) :
-                (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px ${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,data))}px,cover`}
+                (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,Object.keys(data).length))}px ${(this.state.selectedCircleIndex === index && this.state.selectedCircleTierIndex === tierIndex) ? (2*this.state.circleTiers[0]['outerDiameter']) : (fixedDiameter || CircleCalculations.calculateSubCircleDiameter(diameter,Object.keys(data).length))}px,cover`}
             />          
           })}
       </div>
@@ -171,7 +163,6 @@ export default class DatasetContainer extends React.Component {
   }
 
   componentDidMount = () => {
-
     let { collection_id, session_id } = this.props.match.params
     // Collect all data as needed
     axios.post(`${domainName}/datacollections/${collection_id}/datapoints`,{user_id: this.props.user_id})
@@ -213,6 +204,7 @@ export default class DatasetContainer extends React.Component {
               // setstate to render data
               this.setState({
                 data: filteredDataObject,
+                subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,(Object.keys(filteredDataObject).length > tierSizes[0]) ? tierSizes[0] : Object.keys(filteredDataObject).length),
                 circleTiers: CircleCalculations.circleTiers(filteredDataObject,this.props.diameter),
                 selectedCircleIndex: (Object.entries(filteredDataObject).length === 1) ? 0 : undefined,
                 selectedCircleTierIndex: (Object.entries(filteredDataObject).length === 1) ? 0 : undefined,
@@ -240,6 +232,7 @@ export default class DatasetContainer extends React.Component {
               // setstate to render data
               this.setState({
                 data: newDataObject,
+                subCircleDiameter: CircleCalculations.calculateSubCircleDiameter(this.props.diameter,(Object.keys(newDataObject).length > tierSizes[0]) ? tierSizes[0] : Object.keys(newDataObject).length),
                 circleTiers: CircleCalculations.circleTiers(newDataObject,this.props.diameter),
                 selectedCircleIndex: (Object.entries(newDataObject).length === 1) ? 0 : undefined,
                 selectedCircleTierIndex: (Object.entries(newDataObject).length === 1) ? 0 : undefined,
@@ -300,8 +293,8 @@ export default class DatasetContainer extends React.Component {
                 circleTier.data,
                 largestDiameter - circleTier.outerDiameter,
                 (Object.keys(circleTier.data).length !== tierSizes[index] && index!==0) ?
-                  (CircleCalculations.calculateSubCircleDiameter(circleTier.outerDiameter,seedData(tierSizes[index]))) :
-                  (null),
+                (CircleCalculations.calculateSubCircleDiameter(circleTier.outerDiameter,tierSizes[index])) :
+                (null),
                 index,
                 this.state.axiosInDataPointsAllowed
               )
